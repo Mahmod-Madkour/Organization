@@ -1,0 +1,73 @@
+{% load i18n %}
+<div class="d-flex flex-column flex-shrink-0 p-3 bg-light shadow" style="width: 280px; min-height: 100vh;">
+    <a href="{% url 'home' %}" 
+    class="d-flex align-items-center justify-content-center mb-3 mb-md-0 link-dark text-decoration-none">
+        <svg class="bi me-2" width="40" height="32">
+            <use xlink:href="#bootstrap"></use>
+        </svg>
+        <span class="fs-4">{% trans "Quran App" %}</span>
+    </a>
+    <hr>
+
+    <ul class="nav nav-pills flex-column mb-auto">
+        <li class="nav-item">
+            <a href="{% url 'home' %}" 
+            class="nav-link {% if request.resolver_match.url_name == 'home' %}active{% endif %}" 
+            aria-current="page">
+                <i class="bi bi-house-door me-2"></i>
+                {% trans "Home" %}
+            </a>
+        </li>
+        <li>
+            <a href="{% url 'student_list' %}" 
+            class="nav-link {% if request.resolver_match.url_name == 'student_list' %}active{% endif %}">
+                <i class="bi bi-speedometer2 me-2"></i>
+                {% trans "Student" %}
+            </a>
+        </li>
+        <li>
+            <a href="{% url 'teacher_list' %}" 
+            class="nav-link {% if request.resolver_match.url_name == 'teacher_list' %}active{% endif %}">
+                <i class="bi bi-speedometer2 me-2"></i>
+                {% trans "Teacher" %}
+            </a>
+        </li>
+        <li>
+            <a href="{% url 'attendance' %}" 
+            class="nav-link {% if request.resolver_match.url_name == 'attendance' %}active{% endif %}">
+                <i class="bi bi-speedometer2 me-2"></i>
+                {% trans "Attendance" %}
+            </a>
+        </li>
+        <li>
+            <a href="{% url 'invoice' %}" 
+            class="nav-link {% if request.resolver_match.url_name == 'invoice' %}active{% endif %}">
+                <i class="bi bi-speedometer2 me-2"></i>
+                {% trans "Invoice" %}
+            </a>
+        </li>
+    </ul>
+
+    <!-- Language Switcher -->
+    <hr>
+    <form action="{% url 'set_language' %}" method="post" class="mb-3">
+        {% csrf_token %}
+        <label class="form-label small text-muted">{% trans "Language" %}</label>
+        {% get_current_language as LANGUAGE_CODE %}
+        <select name="language" class="form-select form-select-sm" onchange="this.form.submit()">
+            <option value="en" {% if LANGUAGE_CODE == 'en' %}selected{% endif %}>English</option>
+            <option value="ar" {% if LANGUAGE_CODE == 'ar' %}selected{% endif %}>العربية</option>
+        </select>
+    </form>
+
+    <div class="dropdown">
+        <a href="#" class="d-flex align-items-center link-dark text-decoration-none dropdown-toggle"
+        id="dropdownUser2" data-bs-toggle="dropdown" aria-expanded="false">
+            <strong>Mahmoud</strong>
+        </a>
+        <ul class="dropdown-menu text-small shadow" aria-labelledby="dropdownUser2">
+            <li><a class="dropdown-item" href="#">{% trans "Profile" %}</a></li>
+            <li><a class="dropdown-item" href="#">{% trans "Sign out" %}</a></li>
+        </ul>
+    </div>
+</div>

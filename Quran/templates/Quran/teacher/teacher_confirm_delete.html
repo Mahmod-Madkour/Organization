@@ -1,0 +1,17 @@
+{% extends "Quran/base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Delete Teacher" %}{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h3>{% trans "Delete Teacher" %}</h3>
+    <p>{% trans "Are you sure you want to delete" %} "{{ object.name }}"?</p>
+
+    <form method="post">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-danger">{% trans "Confirm" %}</button>
+        <a href="{% url 'teacher_list' %}" class="btn btn-secondary">{% trans "Cancel" %}</a>
+    </form>
+</div>
+{% endblock %}

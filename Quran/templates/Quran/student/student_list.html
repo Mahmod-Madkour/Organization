@@ -1,0 +1,89 @@
+{% extends "Quran/base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Students" %}{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h3 class="d-flex justify-content-center gap-3 mt-4">{% trans "Students" %}</h3>
+
+    <div class="d-flex justify-content-between mb-3">
+        <form method="get" class="d-flex" style="gap: 10px;">
+            <input type="text" name="q" class="form-control" placeholder="{% trans 'Search by name or code' %}" value="{{ search_query }}">
+            <button type="submit" class="btn btn-primary">{% trans "Search" %}</button>
+        </form>
+        <a href="{% url 'student_add' %}" class="btn btn-success">{% trans "Add Student" %}</a>
+    </div>
+
+    <table class="table table-bordered table-striped">
+        <thead class="table-light">
+            <tr>
+                <th>{% trans "Code" %}</th>
+                <th>{% trans "Name" %}</th>
+                <th>{% trans "Phone" %}</th>
+                <th>{% trans "Gender" %}</th>
+                <th>{% trans "Group" %}</th>
+                <th>{% trans "Actions" %}</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for student in students %}
+            <tr>
+                <td>{{ student.code }}</td>
+                <td>{{ student.name }}</td>
+                <td>{{ student.phone }}</td>
+                <td>{{ student.get_gender_display }}</td>
+                <td>{{ student.group }}</td>
+                <td class="text-center">
+                    <a href="{% url 'student_edit' student.pk %}" class="btn btn-sm btn-warning">{% trans "Edit" %}</a>
+                    <a href="{% url 'student_delete' student.pk %}" class="btn btn-sm btn-danger">{% trans "Delete" %}</a>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="6">{% trans "No students found." %}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <!-- Pagination -->
+    {% if is_paginated %}
+    <nav aria-label="Page navigation">
+        <ul class="pagination justify-content-center">
+            {% if page_obj.has_previous %}
+            <li class="page-item">
+                <a class="page-link" href="?q={{ search_query }}&page={{ page_obj.previous_page_number }}" aria-label="Previous">
+                    <span aria-hidden="true">&laquo;</span>
+                </a>
+            </li>
+            {% else %}
+            <li class="page-item disabled">
+                <span class="page-link">&laquo;</span>
+            </li>
+            {% endif %}
+
+            {% for num in paginator.page_range %}
+                {% if page_obj.number == num %}
+                <li class="page-item active"><span class="page-link">{{ num }}</span></li>
+                {% else %}
+                <li class="page-item"><a class="page-link" href="?q={{ search_query }}&page={{ num }}">{{ num }}</a></li>
+                {% endif %}
+            {% endfor %}
+
+            {% if page_obj.has_next %}
+            <li class="page-item">
+                <a class="page-link" href="?q={{ search_query }}&page={{ page_obj.next_page_number }}" aria-label="Next">
+                    <span aria-hidden="true">&raquo;</span>
+                </a>
+            </li>
+            {% else %}
+            <li class="page-item disabled">
+                <span class="page-link">&raquo;</span>
+            </li>
+            {% endif %}
+        </ul>
+    </nav>
+    {% endif %}
+</div>
+{% endblock %}

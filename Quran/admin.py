@@ -2,82 +2,79 @@ from django.contrib import admin
 from django.shortcuts import redirect, render
 from django.urls import path, reverse
 from datetime import timedelta
-from Quran.models import Student, Teacher, Course, Group, Attendance, Invoice
-from Quran.forms import StudentAdminForm, TeacherAdminForm, GroupAdminForm
-from Quran.views import attendance, create_invoice
+from .models import (
+    Student,
+    Teacher,
+    Course,
+    Group,
+    Invoice,
+    Attendance,
+    StudentPaymentStatus
+)
 
 
-# Student
 @admin.register(Student)
 class StudentAdmin(admin.ModelAdmin):
-    form = StudentAdminForm
-    list_display = ('name', 'code', 'gender', 'phone', 'group', 'is_active')
-    list_filter = ('code', 'gender', 'is_active')
-
-    fieldsets = (
-        ('Personal Info', {'fields': ('name', 'code', 'phone', 'gender')}),
-        ('Advanced Options', {'fields': ('birth_date', 'academic_year', 'is_active')}),
-        ('Group', {'fields': ('group',)}),
-    )
-
-    def get_readonly_fields(self, request, obj=None):
-        return ['code']
+    list_display = ("name", "code", "phone", "gender", "academic_year", "group", "is_active", "registration_date")
+    list_filter = ("gender", "academic_year", "group", "is_active")
+    search_fields = ("name", "code", "phone")
+    ordering = ("name",)
+    list_per_page = 25
+    readonly_fields = ("code", "registration_date")
 
 
-# Teacher
 @admin.register(Teacher)
 class TeacherAdmin(admin.ModelAdmin):
-    form = TeacherAdminForm
-    list_display = ('name', 'gender', 'phone', 'is_active')
-    list_filter = ('name', 'gender', 'phone', 'is_active')
+    list_display = ("name", "phone", "email", "gender", "is_active", "registration_date")
+    list_filter = ("gender", "is_active")
+    search_fields = ("name", "phone", "email")
+    ordering = ("name",)
+    list_per_page = 25
+    readonly_fields = ("registration_date",)
 
-    fieldsets = (
-        ('Personal Info', {'fields': ('name', 'gender', 'email', 'phone'), }),
-        ('Advanced Options', {'fields': ('birth_date', 'is_active'),}),
-    )
 
-# Course
 @admin.register(Course)
 class CourseAdmin(admin.ModelAdmin):
-    list_display = ('name', 'price', 'is_active')
-    list_filter = ('name', 'is_active')
+    list_display = ("name", "price", "is_active")
+    list_filter = ("is_active",)
+    search_fields = ("name",)
+    ordering = ("name",)
+    list_per_page = 25
 
-    fieldsets = (
-        ('Course Info', {'fields': ('name', 'price', 'is_active')}),
-        ('Details', {'fields': ('description',)}),
-    )
 
 @admin.register(Group)
 class GroupAdmin(admin.ModelAdmin):
-    form = GroupAdminForm
-    list_display = ('name', 'teacher', 'course', 'start_time', 'end_time')
-    list_filter = ('name', 'teacher', 'course')
-    fieldsets = (
-        ('Group Info', {'fields': ('name', 'is_active')}),
-        ('Details', {'fields': ('course', 'teacher')}),
-        ('Timing', {'fields': ('start_time', 'end_time')}),
-    )
+    list_display = ("name", "course", "teacher", "start_time", "end_time", "is_active")
+    list_filter = ("course", "teacher", "is_active")
+    search_fields = ("name", "course__name", "teacher__name")
+    ordering = ("name",)
+    list_per_page = 25
 
-@admin.register(Attendance)
-class AttendanceAdmin(admin.ModelAdmin):
-    def changelist_view(self, request, extra_context=None):
-        return redirect('admin:attendance-admin-view') 
-
-    def get_urls(self):
-        urls = super().get_urls()
-        custom_urls = [
-            path('', self.admin_site.admin_view(attendance), name='attendance'),
-        ]
-        return custom_urls + urls
 
 @admin.register(Invoice)
 class InvoiceAdmin(admin.ModelAdmin):
-    def changelist_view(self, request, extra_context=None):
-        return redirect('admin:invoice-admin-view') 
+    list_display = ("student", "month", "year", "amount", "date")
+    list_filter = ("year", "month")
+    search_fields = ("student__name", "student__code")
+    date_hierarchy = "date"
+    ordering = ("-date",)
+    list_per_page = 25
 
-    def get_urls(self):
-        urls = super().get_urls()
-        custom_urls = [
-            path('', self.admin_site.admin_view(create_invoice), name='create-invoice'),
-        ]
-        return custom_urls + urls
+
+@admin.register(Attendance)
+class AttendanceAdmin(admin.ModelAdmin):
+    list_display = ("student", "date", "present")
+    list_filter = ("date", "present")
+    search_fields = ("student__name", "student__code")
+    date_hierarchy = "date"
+    ordering = ("-date",)
+    list_per_page = 25
+
+
+@admin.register(StudentPaymentStatus)
+class StudentPaymentStatusAdmin(admin.ModelAdmin):
+    list_display = ("student", "month", "year", "is_paid")
+    list_filter = ("is_paid", "year", "month")
+    search_fields = ("student__name", "student__code")
+    ordering = ("-year", "-month")
+    list_per_page = 25

@@ -1,0 +1,46 @@
+{% extends 'Quran/base.html' %}
+{% load static %}
+{% load i18n %}
+
+{% block title %}
+    {% trans "Home" %}
+{% endblock %}
+
+{% block content %}
+    <div class="container text-center mt-5">
+        <h1 class="mb-4">Welcome to the Dashboard</h1>
+        <br>
+        <div class="row justify-content-center g-4">
+            <!-- Admin Card -->
+            <div class="col-md-4">
+                <div class="card shadow-sm p-3">
+                    <div class="card-body">
+                        <h5 class="card-title mt-3">Admin Page</h5>
+                        <p class="card-text">Manage users, settings, and system.</p>
+                        <a href="/admin/Quran/" class="btn btn-primary">Go to Admin</a>
+                    </div>
+                </div>
+            </div>
+            <!-- Attendance Card -->
+            <div class="col-md-4">
+                <div class="card shadow-sm p-3">
+                    <div class="card-body">
+                        <h5 class="card-title mt-3">Attendance</h5>
+                        <p class="card-text">Track and manage attendance.</p>
+                        <a href="/attendance" class="btn btn-success">Go to Attendance</a>
+                    </div>
+                </div>
+            </div>
+            <!-- Invoice Card -->
+            <div class="col-md-4">
+                <div class="card shadow-sm p-3">
+                    <div class="card-body">
+                        <h5 class="card-title mt-3">Invoices</h5>
+                        <p class="card-text">Create and print invoices.</p>
+                        <a href="/invoice" class="btn btn-warning text-white">Go to Invoices</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

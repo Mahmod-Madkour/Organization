@@ -1,0 +1,31 @@
+{% load static i18n %}
+{% get_current_language as LANGUAGE_CODE %}
+
+<!DOCTYPE html>
+<html lang="{{ LANGUAGE_CODE }}">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>{% block title %}{% trans "Quran Dashboard" %}{% endblock %}</title>
+
+        <!-- Bootstrap & Select2 & Custom CSS -->
+        <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+        <link rel="stylesheet" href="{% static 'css/select2.min.css' %}">
+        <link rel="stylesheet" href="{% static 'css/style.css' %}">
+        
+    </head>
+    <body dir="{% if LANGUAGE_CODE == 'ar' %}rtl{% else %}ltr{% endif %}">
+        <div class="d-flex">
+            {% include 'Quran/sidebar.html' %}
+            <main class="flex-grow-1 p-4 bg-light">
+                {% block content %}{% endblock %}
+            </main>
+        </div>
+        
+        <!-- JS -->
+        <script src="{% static 'js/jquery-3.6.0.min.js' %}"></script>
+        <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
+        <script src="{% static 'js/select2.min.js' %}"></script>
+        <script src="{% static 'js/main.js' %}"></script>
+    </body>
+</html>
