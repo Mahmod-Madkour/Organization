@@ -1,45 +1,55 @@
 {% extends "Quran/base.html" %}
 {% load i18n %}
 
-{% block title %}{% trans "Teachers" %}{% endblock %}
+{% block title %}{% trans "Groups" %}{% endblock %}
 
 {% block content %}
 <div class="container">
-    <h3 class="d-flex justify-content-center gap-3 mt-4">{% trans "Teachers" %}</h3>
+    <h3 class="d-flex justify-content-center gap-3 mt-4">{% trans "Groups" %}</h3>
     
     <div class="d-flex justify-content-between mb-3">
         <form method="get" class="d-flex" style="gap: 10px;">
             <input type="text" name="q" class="form-control" placeholder="{% trans 'Search by name or code' %}" value="{{ search_query }}">
             <button type="submit" class="btn btn-primary">{% trans "Search" %}</button>
         </form>
-        <a href="{% url 'teacher_add' %}" class="btn btn-success">{% trans "Add Teacher" %}</a>
+        <a href="{% url 'class_group_add' %}" class="btn btn-success">{% trans "Add Group" %}</a>
     </div>
 
     <table class="table table-bordered table-striped">
         <thead class="table-light">
             <tr>
                 <th>{% trans "Name" %}</th>
-                <th>{% trans "ID" %}</th>
-                <th>{% trans "Phone" %}</th>
-                <th>{% trans "Gender" %}</th>
+                <th>{% trans "Course" %}</th>
+                <th>{% trans "Teacher" %}</th>
+                <th>{% trans "Start" %}</th>
+                <th>{% trans "End" %}</th>
+                <th>{% trans "Status" %}</th>
                 <th>{% trans "Actions" %}</th>
             </tr>
         </thead>
         <tbody>
-            {% for teacher in teachers %}
+            {% for class_group in class_groups %}
             <tr>
-                <td>{{ teacher.name }}</td>
-                <td>{{ teacher.id_number }}</td>
-                <td>{{ teacher.phone }}</td>
-                <td>{{ teacher.get_gender_display }}</td>
+                <td>{{ class_group.name }}</td>
+                <td>{{ class_group.course }}</td>
+                <td>{{ class_group.teacher }}</td>
+                <td>{{ class_group.start_time }}</td>
+                <td>{{ class_group.end_time }}</td>
+                <td>
+                    {% if class_group.is_active %}
+                        <i class="bi bi-check-circle-fill text-success"></i>
+                    {% else %}
+                        <i class="bi bi-check-circle-fill text-danger"></i>
+                    {% endif %}
+                </td>
                 <td class="text-center">
-                    <a href="{% url 'teacher_edit' teacher.pk %}" class="btn btn-sm btn-warning">{% trans "Edit" %}</a>
-                    <a href="{% url 'teacher_delete' teacher.pk %}" class="btn btn-sm btn-danger">{% trans "Delete" %}</a>
+                    <a href="{% url 'class_group_edit' class_group.pk %}" class="btn btn-sm btn-warning">{% trans "Edit" %}</a>
+                    <a href="{% url 'class_group_delete' class_group.pk %}" class="btn btn-sm btn-danger">{% trans "Delete" %}</a>
                 </td>
             </tr>
             {% empty %}
             <tr>
-                <td colspan="6">{% trans "No teachers found." %}</td>
+                <td colspan="6">{% trans "No groups found." %}</td>
             </tr>
             {% endfor %}
         </tbody>

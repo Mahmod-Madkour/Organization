@@ -1,0 +1,28 @@
+{% extends "Quran/base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Group Form" %}{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h3 class="d-flex justify-content-center gap-3 mt-4">{% trans "Group Form" %}</h3>
+
+    <form method="post">
+        {% csrf_token %}
+        {{ form.non_field_errors }}
+        {% for field in form %}
+            <div class="mb-3">
+                <label class="form-label">{{ field.label }}</label>
+                {{ field }}
+                {% if field.errors %}
+                    <div class="text-danger small">{{ field.errors }}</div>
+                {% endif %}
+            </div>
+        {% endfor %}
+        <div class="d-flex justify-content-center gap-3 mt-4">
+            <button type="submit" class="btn btn-success">{% trans "Save" %}</button>
+            <a href="{% url 'class_group_list' %}" class="btn btn-secondary">{% trans "Cancel" %}</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

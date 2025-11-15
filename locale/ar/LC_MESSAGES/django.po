@@ -37,3 +37,177 @@ msgstr "الرئيسية"
 #: Quran/templates/Quran/home.html:7
 msgid "Welcome to Quran App"
 msgstr "أهلاً بك في تطبيق القرآن"
+
+msgid "Male"
+msgstr "ذكر"
+
+msgid "Female"
+msgstr "أنثى"
+
+msgid "Pre-Primary"
+msgstr "مرحلة ما قبل الابتدائي"
+
+msgid "Primary 1"
+msgstr "الصف الأول الابتدائي"
+
+msgid "Primary 2"
+msgstr "الصف الثاني الابتدائي"
+
+msgid "Primary 3"
+msgstr "الصف الثالث الابتدائي"
+
+msgid "Primary 4"
+msgstr "الصف الرابع الابتدائي"
+
+msgid "Primary 5"
+msgstr "الصف الخامس الابتدائي"
+
+msgid "Primary 6"
+msgstr "الصف السادس الابتدائي"
+
+msgid "Middle 1"
+msgstr "الصف الأول المتوسط"
+
+msgid "Middle 2"
+msgstr "الصف الثاني المتوسط"
+
+msgid "Middle 3"
+msgstr "الصف الثالث المتوسط"
+
+msgid "High 1"
+msgstr "الصف الأول الثانوي"
+
+msgid "High 2"
+msgstr "الصف الثاني الثانوي"
+
+msgid "High 3"
+msgstr "الصف الثالث الثانوي"
+
+msgid "University Year 1"
+msgstr "السنة الأولى في الجامعة"
+
+msgid "University Year 2"
+msgstr "السنة الثانية في الجامعة"
+
+msgid "University Year 3"
+msgstr "السنة الثالثة في الجامعة"
+
+msgid "University Year 4"
+msgstr "السنة الرابعة في الجامعة"
+
+msgid "ID number must be exactly 14 digits and contain only numbers."
+msgstr "يجب أن يتكون رقم الهوية من 14 رقمًا ويحتوي على أرقام فقط."
+
+msgid "Phone number must be exactly 11 digits and contain only numbers."
+msgstr "يجب أن يتكون رقم الهاتف من 11 رقمًا ويحتوي على أرقام فقط."
+
+msgid "Student Name"
+msgstr "اسم الطالب"
+
+msgid "Code"
+msgstr "الرمز"
+
+msgid "Phone Number"
+msgstr "رقم الهاتف"
+
+msgid "Gender"
+msgstr "النوع"
+
+msgid "Birth Date"
+msgstr "تاريخ الميلاد"
+
+msgid "Academic Year"
+msgstr "السنة الدراسية"
+
+msgid "Active"
+msgstr "نشط"
+
+msgid "Registration Date"
+msgstr "تاريخ التسجيل"
+
+msgid "Group"
+msgstr "المجموعة"
+
+msgid "Student"
+msgstr "الطالب"
+
+msgid "Students"
+msgstr "الطلاب"
+
+msgid "Teacher Name"
+msgstr "اسم المعلم"
+
+msgid "Teacher"
+msgstr "المعلم"
+
+msgid "Teachers"
+msgstr "المعلمين"
+
+msgid "Course Name"
+msgstr "اسم الدورة"
+
+msgid "Price"
+msgstr "السعر"
+
+msgid "Description"
+msgstr "الوصف"
+
+msgid "Course"
+msgstr "الدورة"
+
+msgid "Courses"
+msgstr "الدورات"
+
+msgid "Group Name"
+msgstr "اسم المجموعة"
+
+msgid "Start Time"
+msgstr "وقت البدء"
+
+msgid "End Time"
+msgstr "وقت الانتهاء"
+
+msgid "Groups"
+msgstr "المجموعات"
+
+msgid "Date"
+msgstr "التاريخ"
+
+msgid "Month"
+msgstr "الشهر"
+
+msgid "Year"
+msgstr "السنة"
+
+msgid "Total Amount"
+msgstr "المبلغ الإجمالي"
+
+msgid "Invoice"
+msgstr "فاتورة"
+
+msgid "Invoices"
+msgstr "فواتير"
+
+msgid "Student is not assigned to any group."
+msgstr "الطالب غير مسجل في أي مجموعة."
+
+msgid "The amount %(amount)s must equal course price %(expected_price)s."
+msgstr "يجب أن يساوي المبلغ %(amount)s سعر الدورة %(expected_price)s."
+
+msgid "Attendance"
+msgstr "الحضور"
+
+msgid "Attendances"
+msgstr "سجلات الحضور"
+
+msgid "Present"
+msgstr "حاضر"
+
+msgid "Paid this Month"
+msgstr "مدفوع هذا الشهر"
+
+msgid "Student Payment Status"
+msgstr "حالة دفع الطالب"
+
+msgid "Student Payment Statuses"
+msgstr "حالات دفع الطلاب"

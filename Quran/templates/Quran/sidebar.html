@@ -1,55 +1,76 @@
 {% load i18n %}
-<div class="d-flex flex-column flex-shrink-0 p-3 bg-light shadow" style="width: 280px; min-height: 100vh;">
+<div class="d-flex flex-column flex-shrink-0 p-3 shadow sidebar-bg">
     <a href="{% url 'home' %}" 
-    class="d-flex align-items-center justify-content-center mb-3 mb-md-0 link-dark text-decoration-none">
-        <svg class="bi me-2" width="40" height="32">
-            <use xlink:href="#bootstrap"></use>
-        </svg>
+       class="d-flex align-items-center justify-content-center mb-3 mb-md-0 link-dark text-decoration-none">
+        <i class="bi bi-book-half fs-2 me-2"></i>
         <span class="fs-4">{% trans "Quran App" %}</span>
     </a>
+
     <hr>
 
     <ul class="nav nav-pills flex-column mb-auto">
+        <!-- Home -->
         <li class="nav-item">
             <a href="{% url 'home' %}" 
-            class="nav-link {% if request.resolver_match.url_name == 'home' %}active{% endif %}" 
-            aria-current="page">
-                <i class="bi bi-house-door me-2"></i>
+               class="nav-link {% if request.resolver_match.url_name == 'home' %}active{% endif %}">
+                <i class="bi bi-house-door-fill me-2"></i>
                 {% trans "Home" %}
             </a>
         </li>
+        <!-- Students -->
         <li>
             <a href="{% url 'student_list' %}" 
-            class="nav-link {% if request.resolver_match.url_name == 'student_list' %}active{% endif %}">
-                <i class="bi bi-speedometer2 me-2"></i>
+               class="nav-link {% if request.resolver_match.url_name == 'student_list' %}active{% endif %}">
+                <i class="bi bi-person-fill me-2"></i>
                 {% trans "Student" %}
             </a>
         </li>
+        <!-- Teachers -->
         <li>
             <a href="{% url 'teacher_list' %}" 
-            class="nav-link {% if request.resolver_match.url_name == 'teacher_list' %}active{% endif %}">
-                <i class="bi bi-speedometer2 me-2"></i>
+               class="nav-link {% if request.resolver_match.url_name == 'teacher_list' %}active{% endif %}">
+                <i class="bi bi-person-badge-fill me-2"></i>
                 {% trans "Teacher" %}
             </a>
         </li>
+        <!-- Courses -->
+        {% if request.user.is_superuser or perms.Quran.view_course %}
+            <li>
+                <a href="{% url 'course_list' %}" 
+                class="nav-link {% if request.resolver_match.url_name == 'course_list' %}active{% endif %}">
+                    <i class="bi bi-journal-bookmark-fill me-2"></i>
+                    {% trans "Course" %}
+                </a>
+            </li>
+        {% endif %}
+        <!-- Groups -->
+        <li>
+            <a href="{% url 'class_group_list' %}" 
+               class="nav-link {% if request.resolver_match.url_name == 'class_group_list' %}active{% endif %}">
+                <i class="bi bi-people-fill"></i>
+                {% trans "Group" %}
+            </a>
+        </li>
+        <!-- Attendance -->
         <li>
             <a href="{% url 'attendance' %}" 
-            class="nav-link {% if request.resolver_match.url_name == 'attendance' %}active{% endif %}">
-                <i class="bi bi-speedometer2 me-2"></i>
+               class="nav-link {% if request.resolver_match.url_name == 'attendance' %}active{% endif %}">
+                <i class="bi bi-calendar-check-fill me-2"></i>
                 {% trans "Attendance" %}
             </a>
         </li>
+        <!-- Invoice -->
         <li>
             <a href="{% url 'invoice' %}" 
-            class="nav-link {% if request.resolver_match.url_name == 'invoice' %}active{% endif %}">
-                <i class="bi bi-speedometer2 me-2"></i>
+               class="nav-link {% if request.resolver_match.url_name == 'invoice' %}active{% endif %}">
+                <i class="bi bi-receipt-cutoff me-2"></i>
                 {% trans "Invoice" %}
             </a>
         </li>
     </ul>
-
-    <!-- Language Switcher -->
     <hr>
+
+    <!-- Language -->
     <form action="{% url 'set_language' %}" method="post" class="mb-3">
         {% csrf_token %}
         <label class="form-label small text-muted">{% trans "Language" %}</label>
@@ -62,12 +83,12 @@
 
     <div class="dropdown">
         <a href="#" class="d-flex align-items-center link-dark text-decoration-none dropdown-toggle"
-        id="dropdownUser2" data-bs-toggle="dropdown" aria-expanded="false">
+           id="dropdownUser2" data-bs-toggle="dropdown" aria-expanded="false">
             <strong>Mahmoud</strong>
         </a>
         <ul class="dropdown-menu text-small shadow" aria-labelledby="dropdownUser2">
-            <li><a class="dropdown-item" href="#">{% trans "Profile" %}</a></li>
-            <li><a class="dropdown-item" href="#">{% trans "Sign out" %}</a></li>
+            <li><a class="dropdown-item" href="#"><i class="bi bi-person-lines-fill me-2"></i>{% trans "Profile" %}</a></li>
+            <li><a class="dropdown-item" href="#"><i class="bi bi-box-arrow-right me-2"></i>{% trans "Sign out" %}</a></li>
         </ul>
     </div>
 </div>
