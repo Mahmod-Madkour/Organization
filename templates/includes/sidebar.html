@@ -67,6 +67,16 @@
                 {% trans "Invoice" %}
             </a>
         </li>
+        <!-- Monthly Summary Report -->
+        {% if request.user.is_superuser %}
+            <li>
+                <a href="{% url 'monthly_summary_report' %}" 
+                class="nav-link {% if request.resolver_match.url_name == 'monthly_summary_report' %}active{% endif %}">
+                    <i class="bi bi-journal-bookmark-fill me-2"></i>
+                    {% trans "Monthly Summary Report" %}
+                </a>
+            </li>
+        {% endif %}
     </ul>
     <hr>
 

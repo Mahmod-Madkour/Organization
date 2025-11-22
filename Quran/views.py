@@ -415,6 +415,12 @@ def print_invoice(request, invoice_id):
     return render(request, 'Quran/invoice/print_invoice.html', {'invoice': invoice})
 
 
+# --------------------- Reports ---------------------
+@method_decorator(staff_member_required, name='dispatch')
+class MonthlySummaryReportView(TemplateView):
+    template_name = 'Quran/reports/monthly_summary_report.html'
+
+
 if __name__ == "__main__":
     # upgrade academic year
     today = timezone.now().date()
