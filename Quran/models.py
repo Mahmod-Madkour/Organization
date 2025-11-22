@@ -1,4 +1,5 @@
 import random
+from decimal import Decimal
 from django.db import models
 from django.utils import timezone
 from django.contrib.auth.models import User
@@ -39,6 +40,12 @@ ACADEMIC_YEAR_CHOICES = [
     ('university_2', _('University Year 2')),
     ('university_3', _('University Year 3')),
     ('university_4', _('University Year 4')),
+]
+
+DISCOUNT_TYPE_CHOICES = [
+    ('none', _('No discount')),
+    ('discount', _('Have discount')),
+    ('full', _('Full discount')),
 ]
 
 # -------------------------
@@ -107,6 +114,7 @@ class Student(models.Model):
     birth_date = models.DateField(blank=True, null=True, verbose_name=_("Birth Date"))
     academic_year = models.CharField(max_length=20, choices=ACADEMIC_YEAR_CHOICES, blank=True, null=True, verbose_name=_("Academic Year"))
     group = models.ForeignKey(ClassGroup, on_delete=models.SET_NULL, null=True, blank=True, related_name='students', verbose_name=_("Group"))
+    discount_type = models.CharField(max_length=10, choices=DISCOUNT_TYPE_CHOICES, default='none', verbose_name=_("Discount Type"))
     is_active = models.BooleanField(default=True, verbose_name=_("Active"))
     registration_date = models.DateTimeField(default=timezone.now, verbose_name=_("Registration Date"))
 
@@ -139,13 +147,35 @@ class Invoice(models.Model):
     def __str__(self):
         return f"Invoice for {self.student.name} - {self.month}/{self.year}"
 
+    # Correct discount calculation
+    @staticmethod
+    def calculate_expected_amount(student):
+        base_price = student.group.course.price
+        discount_value = Decimal('30.00')
+
+        if student.discount_type == 'full':
+            return Decimal('0.00')
+        elif student.discount_type == 'discount':
+            return base_price - discount_value
+        return base_price
+
     def clean(self):
-        super().clean()
+        # Student must be assigned to a group
         if not self.student.group:
             raise ValidationError(_("Student is not assigned to any group."))
-        expected_price = self.student.group.course.price
-        if self.amount != expected_price:
-            raise ValidationError(_(f"The amount {self.amount} must equal course price {expected_price}."))
+
+        # Validate expected amount
+        expected = Invoice.calculate_expected_amount(self.student)
+        if self.amount != expected:
+            raise ValidationError(_(f"Amount must equal course price: {expected}."))
+
+        # Validate uniqueness
+        if Invoice.objects.filter(
+            student=self.student,
+            month=self.month,
+            year=self.year
+        ).exclude(id=self.id).exists():
+            raise ValidationError(_("An invoice already exists for this student for this month."))
 
 
 class Attendance(models.Model):

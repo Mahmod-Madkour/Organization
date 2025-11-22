@@ -56,7 +56,11 @@
         <table class="table table-bordered table-striped text-start align-middle" id="attendanceTable">
             <thead class="table-light">
                 <tr>
-                    <th colspan="4" class="text-center">{% trans "Students" %}</th>
+                    <th colspan="4" class="text-center">
+                        {% blocktrans with group_name=selected_group date=selected_date %}
+                            Attendance of students in group {{ group_name|default:"" }} on {{ date|default:"" }}
+                        {% endblocktrans %}
+                    </th>
                 </tr>
                 <tr>
                     <th>{% trans "Code ID" %}</th>
@@ -85,7 +89,7 @@
                             {% endif %}
                         </td>
                         <td>
-                            <input type="checkbox" class="form-check-input" name="present_{{ student.student_id }}"
+                            <input type="checkbox" class="form-check-input" name="present" value="{{ student.student_id }}"
                             {% if student.present %}checked{% endif %}/>
                         </td>
                     </tr>

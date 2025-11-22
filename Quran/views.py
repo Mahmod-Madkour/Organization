@@ -274,7 +274,7 @@ class AttendanceView(TemplateView):
         if selected_date and selected_group:
             students = Student.objects.filter(is_active=True, group=selected_group)
             for student in students:
-                missing = get_missing_months_for_student(student.id)
+                missing = get_missing_months_for_student(student)
                 present = get_present_for_student(student.id, selected_date)
                 context['group_students'].append({
                     "student_id": student.id,
@@ -289,73 +289,123 @@ class AttendanceView(TemplateView):
         selected_date = request.POST.get('selected_date')
         selected_group = request.POST.get('selected_group')
         student_ids = request.POST.getlist('student_ids')
+        present_student_ids = request.POST.getlist('present')
 
         for student_id in student_ids:
-            present = f'present_{student_id}' in request.POST
+            present = str(student_id) in present_student_ids
+            student = Student.objects.get(id=student_id)
+
             Attendance.objects.update_or_create(
+                school=student.school,
+                student=student,
                 date=selected_date,
-                student_id=student_id,
                 defaults={'present': present}
             )
-        return redirect(f"{reverse('attendance')}?selected_date={selected_date}&selected_group={selected_group}")
+
+        # After saving, just render the updated context
+        context = self.get_context_data()
+        context['selected_date'] = selected_date
+        context['selected_group'] = selected_group
+
+        return self.render_to_response(context)
 
 
 # --------------------- Invoices ---------------------
 @method_decorator(staff_member_required, name='dispatch')
 class InvoiceCreateView(TemplateView):
     template_name = 'Quran/invoice/invoice.html'
-    # success_url = reverse_lazy('invoice')
+
+    def get_student(self, code=None, name=None):
+        """Return the student object based on code or name."""
+        if code:
+            return Student.objects.filter(code=code).first()
+        if name:
+            return Student.objects.filter(name__icontains=name).first()
+        return None
+
+    def build_student_context(self, student):
+        """Return context dictionary for a student."""
+        expected_price = Invoice.calculate_expected_amount(student)
+        return {
+            "id": student.id,
+            "code": student.code,
+            "name": student.name,
+            "group": student.group.name,
+            "course": student.group.course.name,
+            "price": expected_price,
+        }
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         today = date.today()
+        current_month = today.month
+        current_year = today.year
         context.update({
             "months": range(1, 13),
-            "years": range(2025, 2031),
-            "current_month": today.month,
-            "current_year": today.year,
+            "years": range(current_year, current_year + 10),
+            "current_month": current_month,
+            "current_year": current_year,
         })
-        code = self.request.GET.get('selected_code')
-        name = self.request.GET.get('selected_name')
-
-        student = None
-        if code:
-            student = Student.objects.filter(code=code).first()
-        elif name:
-            student = Student.objects.filter(name__icontains=name).first()
-
-        if student:
-            context['student_data'] = {
-                'name': student.name,
-                'code': student.code,
-                'group': student.group,
-                'course': student.group.course.name if student.group else None,
-                'price': student.group.course.price if student.group else None,
-            }
-        elif (code or name):
-            context['error_msg'] = "Student Not Found."
-
         return context
 
+    def get(self, request, *args, **kwargs):
+        context = self.get_context_data(**kwargs)
+        selected_code = request.GET.get("selected_code")
+        selected_name = request.GET.get("selected_name")
+
+        context.update({
+            "selected_code": selected_code,
+            "selected_name": selected_name,
+        })
+
+        student = self.get_student(code=selected_code, name=selected_name)
+        if not student:
+            context["error_msg"] = "Student not found."
+            return render(request, self.template_name, context)
+
+        if student.discount_type == 'full':
+            context["error_msg"] = "Student is exempt."
+            return render(request, self.template_name, context)
+
+        context["student_data"] = self.build_student_context(student)
+        return render(request, self.template_name, context)
+
     def post(self, request, *args, **kwargs):
+        context = self.get_context_data()
         code = request.POST.get('student_code')
         year = request.POST.get('year')
         month = request.POST.get('month')
-        amount = request.POST.get('amount')
 
+        student = self.get_student(code=code)
+        if not student:
+            context["error_msg"] = "Student not found."
+            return render(request, self.template_name, context)
+
+        if student.discount_type == 'full':
+            context["error_msg"] = "Student is exempt."
+            return render(request, self.template_name, context)
+
+        context["student_data"] = self.build_student_context(student)
+
+        # Check duplicate invoice
+        if Invoice.objects.filter(student=student, month=month, year=year).exists():
+            context["error_msg"] = f"An invoice already exists for {month}/{year}."
+            return self.render_to_response(context)
+
+        # Create invoice safely
+        invoice = Invoice(
+            school=student.school,
+            student=student,
+            month=month,
+            year=year,
+            amount=Invoice.calculate_expected_amount(student),
+        )
+        
         try:
-            student = Student.objects.get(code=code)
-            invoice = Invoice.objects.create(
-                school=get_user_school(request),
-                student=student,
-                month=month,
-                year=year,
-                amount=amount
-            )
-            return redirect('print_invoice', invoice_id=invoice.id)
-        except ValidationError as error:
-            context = self.get_context_data()
-            context['error_msg'] = ', '.join(error.message_dict.get('__all__', []))
+            invoice.save()
+            return redirect("print_invoice", invoice_id=invoice.id)
+        except ValidationError as e:
+            context["error_msg"] = "; ".join(e.messages)
             return self.render_to_response(context)
 
 

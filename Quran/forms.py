@@ -7,7 +7,7 @@ from Quran.models import (
 class StudentForm(forms.ModelForm):
     class Meta:
         model = Student
-        fields = ['school', 'name', 'phone', 'gender', 'birth_date', 'academic_year', 'group', 'is_active']
+        fields = ['school', 'name', 'phone', 'gender', 'birth_date', 'academic_year', 'group', 'discount_type', 'is_active']
         widgets = {
             'school': forms.Select(attrs={'class': 'form-select2'}),
             'name': forms.TextInput(attrs={'class': 'form-control'}),
@@ -22,6 +22,7 @@ class StudentForm(forms.ModelForm):
             'gender': forms.Select(attrs={'class': 'form-select2'}),
             'academic_year': forms.Select(attrs={'class': 'form-select2'}),
             'group': forms.Select(attrs={'class': 'form-select2'}),
+            'discount_type': forms.Select(attrs={'class': 'form-select2'}),
             'is_active': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
         }
 

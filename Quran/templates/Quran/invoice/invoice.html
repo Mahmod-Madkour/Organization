@@ -15,13 +15,13 @@
             <!-- Code Input -->
             <div class="col-md-4">
                 <label class="form-label">{% trans "Enter Code" %}</label>
-                <input type="number" class="form-control" name="selected_code" value="{{ student_data.code }}">
+                <input type="number" class="form-control" name="selected_code" value="{{ selected_code }}">
             </div>
 
             <!-- Name Input -->
             <div class="col-md-4">
                 <label class="form-label">{% trans "Enter Name" %}</label>
-                <input type="text" class="form-control" name="selected_name" value="{{ student_data.name }}">
+                <input type="text" class="form-control" name="selected_name" value="{{ selected_name }}">
             </div>
 
             <!-- Submit Button -->
@@ -69,12 +69,6 @@
                     <tr>
                         <th>{% trans "Price" %}</th>
                         <td>{{ student_data.price }}</td>
-                    </tr>
-                    <tr>
-                        <th>{% trans "Amount" %}</th>
-                        <td>
-                            <input type="number" class="form-control" name="amount" required>
-                        </td>
                     </tr>
                     <tr>
                         <th>{% trans "For" %}</th>

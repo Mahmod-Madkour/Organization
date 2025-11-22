@@ -12,11 +12,14 @@ def get_user_school(request):
 
 def get_present_for_student(student_id, selected_date):
     attendance = Attendance.objects.filter(student_id=student_id, date=selected_date).first()
-    return attendance.present if attendance else False
+    return attendance.present if attendance else True
 
 
-def get_missing_months_for_student(student_id):
-    start_year, start_month = 2026, 1
+def get_missing_months_for_student(student):
+    if student.discount_type == 'full':
+        return []
+
+    start_year, start_month = 2025, 10
     today = date.today()
 
     required_months = []
@@ -28,11 +31,12 @@ def get_missing_months_for_student(student_id):
             m, y = 1, y + 1
 
     existing_months = set(
-        StudentPaymentStatus.objects.filter(student_id=student_id).values_list('year', 'month')
+        StudentPaymentStatus.objects.filter(student_id=student.id).values_list('year', 'month')
     )
 
-    return [
-        f"{year}-{month:02d}"
-        for (year, month) in required_months
-        if (year, month) not in existing_months
-    ]
+    missing_months = []
+    for (year, month) in required_months:
+        if (year, month) not in existing_months:
+            missing_months.append(f"{year}-{month:02d}" )
+
+    return missing_months
