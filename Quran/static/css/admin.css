@@ -1,0 +1,21 @@
+/* Header background */
+#header {
+    background: #2c3e50;
+    color: #ecf0f1;
+}
+
+/* Header link */
+#header a:link, #header a:visited {
+    color: #ecf0f1;
+}
+
+/* Login form styling (optional) */
+.login #content {
+    border-radius: 10px;
+    padding: 25px;
+}
+
+/* Change save button color */
+.submit-row input.default {
+    background-color: #27ae60;
+}

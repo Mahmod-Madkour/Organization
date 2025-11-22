@@ -74,6 +74,22 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'Organization.wsgi.application'
 
+# =========================================
+# Authentication URLs
+# =========================================
+
+# URL to redirect users for login if they try to access a protected page
+# This should point to your custom login page, not Django admin
+LOGIN_URL = '/login/'
+
+# After successful login, redirect users to the main application homepage
+# Ensures all logins go to the frontend app (Quran.urls) instead of /admin
+LOGIN_REDIRECT_URL = '/'
+
+# After logout, redirect users to the custom login page
+# Keeps users away from Django admin and provides a clean entry point
+LOGOUT_REDIRECT_URL = '/login/'
+
 
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases

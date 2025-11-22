@@ -1,0 +1,138 @@
+{% load static %}
+{% load i18n %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Login</title>
+
+    <!-- Bootstrap -->
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'css/admin-login.css' %}">
+</head>
+
+<body class="bg-light d-flex justify-content-center align-items-center" style="height: 100vh;">
+
+    <div class="card shadow-lg p-4" style="width: 420px; border-radius: 16px;">
+        <div class="text-center mb-3">
+            <h3 class="fw-bold">Welcome to Quran App</h3>
+            <p class="text-muted">Sign in to continue</p>
+        </div>
+
+        <form method="post" class="mt-3" autocomplete="off" novalidate>
+            {% csrf_token %}
+
+            {% if form.non_field_errors %}
+                <div class="alert alert-danger py-2">
+                    {{ form.non_field_errors }}
+                </div>
+            {% endif %}
+
+            <div class="mb-3">
+                <label class="form-label fw-semibold">{% trans "Username" %}</label>
+
+                <input 
+                    type="text"
+                    name="username"
+                    class="form-control form-control-lg"
+                    autocomplete="off"
+                    placeholder="Username"
+                    required
+                >
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label fw-semibold">{% trans "Password" %}</label>
+
+                <input 
+                    type="password"
+                    name="password"
+                    class="form-control form-control-lg"
+                    autocomplete="new-password"
+                    placeholder="Password"
+                    required
+                >
+            </div>
+
+            <button class="btn btn-primary w-100 btn-lg mt-2" type="submit">
+                Login
+            </button>
+        </form>
+    </div>
+
+    <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
+</body>
+</html>
+
+{% comment %} 
+{% load static %}
+{% load i18n %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Login</title>
+
+    <!-- Bootstrap -->
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'css/admin-login.css' %}">
+</head>
+
+<body class="bg-light d-flex justify-content-center align-items-center" style="height: 100vh;">
+
+    <div class="card shadow-lg p-4" style="width: 420px; border-radius: 16px;">
+        <div class="text-center mb-3">
+            <h3 class="fw-bold">Welcome to Quran App</h3>
+            <p class="text-muted">Sign in to continue</p>
+        </div>
+
+        <form method="post" class="mt-3" novalidate>
+            {% csrf_token %}
+
+            {% if form.non_field_errors %}
+                <div class="alert alert-danger py-2">
+                    {{ form.non_field_errors }}
+                </div>
+            {% endif %}
+
+            <div class="mb-3">
+                <label class="form-label fw-semibold">{% trans "Username" %}</label>
+                {{ form.username }}
+
+                <script>
+                    // Apply Bootstrap classes dynamically
+                    document.addEventListener("DOMContentLoaded", function () {
+                        const field = document.querySelector('[name="username"]');
+                        if (field) {
+                            field.classList.add("form-control", "form-control-lg");
+                        }
+                    });
+                </script>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label fw-semibold">{% trans "Password" %}</label>
+                {{ form.password }}
+
+                <script>
+                    document.addEventListener("DOMContentLoaded", function () {
+                        const field = document.querySelector('[name="password"]');
+                        if (field) {
+                            field.classList.add("form-control", "form-control-lg");
+                        }
+                    });
+                </script>
+            </div>
+
+            <button class="btn btn-primary w-100 btn-lg mt-2" type="submit">
+                Login
+            </button>
+        </form>
+    </div>
+
+    <!-- JS -->
+    <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
+</body>
+</html> {% endcomment %}

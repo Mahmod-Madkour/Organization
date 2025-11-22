@@ -87,8 +87,14 @@
             <strong>Mahmoud</strong>
         </a>
         <ul class="dropdown-menu text-small shadow" aria-labelledby="dropdownUser2">
-            <li><a class="dropdown-item" href="#"><i class="bi bi-person-lines-fill me-2"></i>{% trans "Profile" %}</a></li>
-            <li><a class="dropdown-item" href="#"><i class="bi bi-box-arrow-right me-2"></i>{% trans "Sign out" %}</a></li>
+            <li>
+                <form method="post" action="{% url 'logout' %}" style="display:inline;">
+                    {% csrf_token %}
+                    <button type="submit" class="dropdown-item">
+                        <i class="bi bi-box-arrow-right me-2"></i>{% trans "Sign out" %}
+                    </button>
+            </form>
+            </li>
         </ul>
     </div>
 </div>

@@ -16,7 +16,7 @@
     </head>
     <body dir="{% if LANGUAGE_CODE == 'ar' %}rtl{% else %}ltr{% endif %}">
         <div class="d-flex">
-            {% include 'Quran/sidebar.html' %}
+            {% include 'includes/sidebar.html' %}
             <main class="flex-grow-1 p-4 bg-light">
                 {% block content %}{% endblock %}
             </main>
