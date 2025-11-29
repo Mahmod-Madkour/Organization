@@ -7,7 +7,8 @@ from Quran.views import (
     ClassGroupListView, ClassGroupCreateView, ClassGroupUpdateView, ClassGroupDeleteView,
     AttendanceView,
     InvoiceCreateView, print_invoice,
-    MonthlySummaryReportView,
+    PaymentStatusListView,
+    SummaryReportView,
 )
 
 urlpatterns = [
@@ -31,7 +32,7 @@ urlpatterns = [
     path('courses/<int:pk>/edit/', CourseUpdateView.as_view(), name='course_edit'),
     path('courses/<int:pk>/delete/', CourseDeleteView.as_view(), name='course_delete'),
 
-    # Course
+    # Class Group
     path('class_groups/', ClassGroupListView.as_view(), name='class_group_list'),
     path('class_groups/add/', ClassGroupCreateView.as_view(), name='class_group_add'),
     path('class_groups/<int:pk>/edit/', ClassGroupUpdateView.as_view(), name='class_group_edit'),
@@ -44,6 +45,9 @@ urlpatterns = [
     path('invoice/', InvoiceCreateView.as_view(), name='invoice'),
     path('invoice/print/<int:invoice_id>/', print_invoice, name='print_invoice'),
 
+    # Payment Status
+    path('payment_status/', PaymentStatusListView.as_view(), name='payment_status'),
+
     # Reports
-    path('monthly_summary_report/', MonthlySummaryReportView.as_view(), name='monthly_summary_report'),
+    path('summary_report/', SummaryReportView.as_view(), name='summary_report'),
 ]

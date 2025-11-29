@@ -53,13 +53,11 @@
         <input type="hidden" name="selected_date" value="{{ selected_date }}">
         <input type="hidden" name="selected_group" value="{{ selected_group }}">
 
-        <table class="table table-bordered table-striped text-start align-middle" id="attendanceTable">
+        <table class="table table-bordered table-striped" id="attendanceTable">
             <thead class="table-light">
                 <tr>
                     <th colspan="4" class="text-center">
-                        {% blocktrans with group_name=selected_group date=selected_date %}
-                            Attendance of students in group {{ group_name|default:"" }} on {{ date|default:"" }}
-                        {% endblocktrans %}
+                        {% trans "Attendance of students" %}
                     </th>
                 </tr>
                 <tr>

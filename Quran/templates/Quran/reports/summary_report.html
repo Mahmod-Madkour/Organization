@@ -1,0 +1,120 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Invoices" %}{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+
+    <h5 class="text-center fw-bold text-primary">
+        {% trans "Summary Report" %}
+    </h5>
+
+    <!-- Report Filter Form -->
+    <form action="{% url 'summary_report' %}" method="POST">
+        {% csrf_token %}
+        <div class="row g-3 align-items-end">
+            <!-- School -->
+            <div class="col-md-3">
+                <label class="form-label fw-semibold">{% trans "School" %}</label>
+                <select name="school" class="form-select" required>
+                    <option value="">{% trans "--------" %}</option>
+                    {% for school in schools %}
+                    <option value="{{ school.id }}" {% if school.id == selected_school|add:0 %}selected{% endif %}>
+                        {{ school.name }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <!-- Month -->
+            <div class="col-md-3">
+                <label class="form-label fw-semibold">{% trans "Month" %}</label>
+                <select name="month" class="form-select" required>
+                    {% for month in months %}
+                    <option value="{{ month }}" {% if month == selected_month %}selected{% endif %}>{{ month }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <!-- Year -->
+            <div class="col-md-3">
+                <label class="form-label fw-semibold">{% trans "Year" %}</label>
+                <select name="year" class="form-select" required>
+                    {% for year in years %}
+                    <option value="{{ year }}" {% if year == selected_year %}selected{% endif %}>{{ year }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <!-- Buttons -->
+            <div class="col-md-3 d-flex gap-2">
+                <!-- Filter Button -->
+                <button type="submit" name="action" value="filter" class="btn btn-primary w-100">
+                    <i class="bi bi-search me-1"></i> {% trans "Filter Report" %}
+                </button>
+
+                <!-- Excel Button -->
+                <button type="submit" name="action" value="excel" class="btn btn-success w-100">
+                    <i class="bi bi-file-earmark-excel me-1"></i> {% trans "Excel" %}
+                </button>
+            </div>
+
+        </div>
+    </form>
+
+    <div class="table-responsive-custom mt-4">
+        <table class="table table-bordered table-striped full-width-table">
+            <thead class="table-light sticky-header">
+                <tr>
+                    <th class="sticky-col">{% trans "Teacher" %}</th>
+                    <th>{% trans "Group" %}</th>
+                    <th>{% trans "Start Time" %}</th>
+                    <th>{% trans "End Time" %}</th>
+                    <th>{% trans "Total Students" %}</th>
+                    <th>{% trans "Paid (Current Month)" %}</th>
+                    <th>{% trans "Discount (Current Month)" %}</th>
+                    <th>{% trans "Full Discount" %}</th>
+                    <th>{% trans "Not Paid" %}</th>
+                    <th>{% trans "Paid (Previous Months)" %}</th>
+                    <th>{% trans "Discount (Previous Months)" %}</th>
+                    <th>{% trans "Total Amount" %}</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for group in data %}
+                <tr>
+                    <td class="sticky-col">{{ group.teacher__name }}</td>
+                    <td>{{ group.name }}</td>
+                    <td>{{ group.start_time }}</td>
+                    <td>{{ group.end_time }}</td>
+                    <td>{{ group.total_students }}</td>
+                    <td>{{ group.students_paid_current }}</td>
+                    <td>{{ group.students_discount_current }}</td>
+                    <td>{{ group.students_full_discount }}</td>
+                    <td>{{ group.students_not_paid }}</td>
+                    <td>{{ group.students_paid_previous }}</td>
+                    <td>{{ group.students_discount_previous }}</td>
+                    <td>{{ group.final_total }}</td>
+                </tr>
+                {% endfor %}
+
+                {% if totals %}
+                <tr class="table-secondary fw-bold">
+                    <td colspan="4" class="text-center">{% trans "Totals" %}</td>
+                    <td>{{ totals.total_students }}</td>
+                    <td>{{ totals.students_paid_current }}</td>
+                    <td>{{ totals.students_discount_current }}</td>
+                    <td>{{ totals.students_full_discount }}</td>
+                    <td>{{ totals.students_not_paid }}</td>
+                    <td>{{ totals.students_paid_previous }}</td>
+                    <td>{{ totals.students_discount_previous }}</td>
+                    <td>{{ totals.final_total }}</td>
+                </tr>
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

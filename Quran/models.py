@@ -57,6 +57,7 @@ class School(models.Model):
     name = models.CharField(max_length=255, verbose_name=_("School Name"))
     code = models.CharField(max_length=50, unique=True, verbose_name=_("School Code"))
     is_active = models.BooleanField(default=True, verbose_name=_("Active"))
+    updated_at = models.DateTimeField(auto_now=True, verbose_name=_("Updated At"))
 
     def __str__(self):
         return self.name
@@ -67,7 +68,7 @@ class School(models.Model):
 
 
 class Teacher(models.Model):
-    school = models.ForeignKey(School, on_delete=models.SET_NULL, null=True, blank=True, related_name='teachers')
+    school = models.ForeignKey(School, on_delete=models.CASCADE, related_name='teachers', verbose_name=_("School"))
     id_number = models.CharField(max_length=14, validators=[id_regex], unique=True, verbose_name=_("ID"))
     name = models.CharField(max_length=100, verbose_name=_("Teacher Name"))
     phone = models.CharField(max_length=11, validators=[phone_regex], verbose_name=_("Phone Number"))
@@ -76,6 +77,8 @@ class Teacher(models.Model):
     birth_date = models.DateField(blank=True, null=True, verbose_name=_("Birth Date"))
     is_active = models.BooleanField(default=True, verbose_name=_("Active"))
     registration_date = models.DateTimeField(default=timezone.now, verbose_name=_("Registration Date"))
+    description = models.TextField(blank=True, null=True, verbose_name=_("Description"))
+    updated_at = models.DateTimeField(auto_now=True, verbose_name=_("Updated At"))
 
     def __str__(self):
         return self.name
@@ -87,6 +90,7 @@ class Course(models.Model):
     price = models.DecimalField(max_digits=10, decimal_places=2, validators=[MinValueValidator(0)], verbose_name=_("Price"))
     description = models.TextField(blank=True, null=True, verbose_name=_("Description"))
     is_active = models.BooleanField(default=True, verbose_name=_("Active"))
+    updated_at = models.DateTimeField(auto_now=True, verbose_name=_("Updated At"))
 
     def __str__(self):
         return f"{self.name} - {self.price}"
@@ -100,9 +104,10 @@ class ClassGroup(models.Model):
     start_time = models.TimeField(verbose_name=_("Start Time"))
     end_time = models.TimeField(verbose_name=_("End Time"))
     is_active = models.BooleanField(default=True, verbose_name=_("Active"))
+    updated_at = models.DateTimeField(auto_now=True, verbose_name=_("Updated At"))
 
     def __str__(self):
-        return f"{self.name} ({self.start_time.strftime('%I:%M %p')} - {self.end_time.strftime('%I:%M %p')})"
+        return f"{self.name} - {self.teacher} - ({self.start_time.strftime('%I:%M %p')} - {self.end_time.strftime('%I:%M %p')})"
 
 
 class Student(models.Model):
@@ -112,11 +117,12 @@ class Student(models.Model):
     phone = models.CharField(max_length=11, validators=[phone_regex], verbose_name=_("Phone Number"))
     gender = models.CharField(max_length=1, choices=GENDER_CHOICES, verbose_name=_("Gender"))
     birth_date = models.DateField(blank=True, null=True, verbose_name=_("Birth Date"))
-    academic_year = models.CharField(max_length=20, choices=ACADEMIC_YEAR_CHOICES, blank=True, null=True, verbose_name=_("Academic Year"))
-    group = models.ForeignKey(ClassGroup, on_delete=models.SET_NULL, null=True, blank=True, related_name='students', verbose_name=_("Group"))
+    academic_year = models.CharField(max_length=20, choices=ACADEMIC_YEAR_CHOICES, null=True, verbose_name=_("Academic Year"))
+    group = models.ForeignKey(ClassGroup, on_delete=models.SET_NULL, null=True, related_name='students', verbose_name=_("Group"))
     discount_type = models.CharField(max_length=10, choices=DISCOUNT_TYPE_CHOICES, default='none', verbose_name=_("Discount Type"))
     is_active = models.BooleanField(default=True, verbose_name=_("Active"))
     registration_date = models.DateTimeField(default=timezone.now, verbose_name=_("Registration Date"))
+    updated_at = models.DateTimeField(auto_now=True, verbose_name=_("Updated At"))
 
     def __str__(self):
         return f"{self.name}"
@@ -140,6 +146,7 @@ class Invoice(models.Model):
     month = models.PositiveIntegerField(validators=[MinValueValidator(1)], verbose_name=_("Month"))
     year = models.PositiveIntegerField(validators=[MinValueValidator(2000)], verbose_name=_("Year"))
     amount = models.DecimalField(max_digits=10, decimal_places=2, validators=[MinValueValidator(0)], verbose_name=_("Total Amount"))
+    updated_at = models.DateTimeField(auto_now=True, verbose_name=_("Updated At"))
 
     class Meta:
         unique_together = ('student', 'month', 'year')
@@ -151,11 +158,14 @@ class Invoice(models.Model):
     @staticmethod
     def calculate_expected_amount(student):
         base_price = student.group.course.price
-        discount_value = Decimal('30.00')
-
         if student.discount_type == 'full':
             return Decimal('0.00')
         elif student.discount_type == 'discount':
+            try:
+                discount_config = DiscountConfig.objects.filter(school=student.school).first()
+                discount_value = discount_config.value if discount_config else Decimal('0.00')
+            except:
+                discount_value = Decimal('0.00')
             return base_price - discount_value
         return base_price
 
@@ -183,6 +193,7 @@ class Attendance(models.Model):
     student = models.ForeignKey(Student, on_delete=models.CASCADE, related_name='attendances', verbose_name=_("Student"))
     date = models.DateField(verbose_name=_("Date"))
     present = models.BooleanField(default=True, verbose_name=_("Present"))
+    updated_at = models.DateTimeField(auto_now=True, verbose_name=_("Updated At"))
 
     class Meta:
         unique_together = ('student', 'date')
@@ -196,6 +207,21 @@ class StudentPaymentStatus(models.Model):
     month = models.PositiveIntegerField(verbose_name=_("Month"))
     year = models.PositiveIntegerField(verbose_name=_("Year"))
     is_paid = models.BooleanField(default=False, verbose_name=_("Paid"))
+    updated_at = models.DateTimeField(auto_now=True, verbose_name=_("Updated At"))
 
     class Meta:
         unique_together = ('student', 'month', 'year')
+
+class DiscountConfig(models.Model):
+    school = models.ForeignKey(School, on_delete=models.CASCADE, related_name='discount_configs', verbose_name=_("School"))
+    name = models.CharField(max_length=50, verbose_name=_("Discount Name"))
+    value = models.DecimalField(max_digits=10, decimal_places=2, validators=[MinValueValidator(0)], verbose_name=_("Discount Amount"))
+    updated_at = models.DateTimeField(auto_now=True, verbose_name=_("Updated At"))
+
+    class Meta:
+        verbose_name = _("Discount Config")
+        verbose_name_plural = _("Discount Configs")
+
+    def __str__(self):
+        return f"{self.name} - {self.value}"
+

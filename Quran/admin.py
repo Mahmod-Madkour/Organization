@@ -12,7 +12,8 @@ from Quran.models import (
     ClassGroup,
     Invoice,
     Attendance,
-    StudentPaymentStatus
+    StudentPaymentStatus,
+    DiscountConfig,
 )
 
 
@@ -103,6 +104,13 @@ class StudentPaymentStatusAdmin(admin.ModelAdmin):
     search_fields = ("student__name", "student__code")
     ordering = ("-year", "-month")
     list_per_page = 25
+
+
+@admin.register(DiscountConfig)
+class DiscountConfigAdmin(admin.ModelAdmin):
+    list_display = ('school', 'name', 'value', 'updated_at')
+    list_filter = ('school',)
+
 
 admin.site.unregister(User)
 admin.site.register(User, CustomUserAdmin)

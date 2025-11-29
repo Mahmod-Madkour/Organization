@@ -1,18 +1,89 @@
 body {
     background-color: #f8f9fa;
+    font-family: 'Cairo', sans-serif;
 }
+
+/* Home */
 .card {
     transition: transform 0.3s ease;
 }
 .card:hover {
     transform: scale(1.05);
 }
-.icon {
-    font-size: 3rem;
-    color: #0d6efd;
+
+/* Sidbar */
+body[dir='rtl'] .sidebar-bg .nav {
+    padding-right: 0;
+}
+body[dir='ltr'] .sidebar-bg .nav {
+    padding-left: 0;
 }
 .sidebar-bg {
     width: 300px;
     min-height: 100vh;
-    background-color: #dff4e0 !important;
+    background-color: #1C7B3C !important;
+    font-size: 20px !important;
+}
+.nav-link {
+    color: #ffffff !important;
+}
+.nav-link.active {
+    background-color: #76C044 !important;
+}
+
+/* print invoice */
+@media print {
+    body * {
+        visibility: hidden;
+    }
+    .invoice-box, .invoice-box * {
+        visibility: visible;
+    }
+    .invoice-box {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+    }
+    .no-print {
+        display: none;
+    }
+}
+
+/* Select2 Styling */
+.select2-container .select2-selection {
+    border: 1px solid #ced4da;
+    border-radius: 0.375rem;
+    padding: 0.375rem 0.75rem;
+    height: calc(2.25rem + 2px);
+    background-color: #fff;
+}
+.select2-container .select2-selection__rendered {
+    line-height: 1.5;
+    color: #495057;
+    padding-left: 0;
+}
+
+/* Report */
+.table-responsive-custom {
+    width: 100%;
+    overflow-x: auto;
+    position: relative;
+}
+.full-width-table th, .full-width-table td {
+    white-space: nowrap;
+    min-width: 160px;
+}
+.sticky-header th {
+    position: sticky;
+    top: 0;
+    background: #f8f9fa !important;
+    z-index: 5;
+}
+.sticky-col {
+    position: sticky;
+    left: 0;
+    background: #ffffff !important;
+    z-index: 10;
+    border-right: 1px solid #dee2e6;
 }

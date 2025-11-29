@@ -75,13 +75,13 @@
                         <td>
                             <div class="d-flex gap-2">
                                 <select name="month" class="form-select" required>
-                                    <option value="">{% trans "Select Month" %}</option>
+                                    <option value="">{% trans "--------" %}</option>
                                     {% for month in months %}
                                         <option value="{{ month }}" {% if month == current_month %}selected{% endif %}>{{ month }}</option>
                                     {% endfor %}
                                 </select>
                                 <select name="year" class="form-select" required>
-                                    <option value="">{% trans "Select Year" %}</option>
+                                    <option value="">{% trans "--------" %}</option>
                                     {% for year in years %}
                                         <option value="{{ year }}" {% if year == current_year %}selected{% endif %}>{{ year }}</option>
                                     {% endfor %}

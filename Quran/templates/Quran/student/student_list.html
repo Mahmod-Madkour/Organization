@@ -8,8 +8,26 @@
     <h3 class="d-flex justify-content-center gap-3 mt-4">{% trans "Students" %}</h3>
 
     <div class="d-flex justify-content-between mb-3">
-        <form method="get" class="d-flex" style="gap: 10px;">
+        <form method="get" class="d-flex" style="width: 70%; gap: 10px;">
+            <!-- Search field -->
             <input type="text" name="q" class="form-control" placeholder="{% trans 'Search by name or code' %}" value="{{ search_query }}">
+
+            <!-- Gender filter dropdown -->
+            <select name="gender" class="form-select w-100" aria-label="{% trans 'Filter by gender' %}">
+                <option value="">{% trans "--------" %}</option>
+                <option value="M" {% if gender_filter == 'M' %}selected{% endif %}>{% trans 'Male' %}</option>
+                <option value="F" {% if gender_filter == 'F' %}selected{% endif %}>{% trans 'Female' %}</option>
+            </select>
+            
+            <!-- Group filter dropdown -->
+            <select name="group" class="form-select w-100" aria-label="{% trans 'Filter by group' %}">
+                <option value="">{% trans "--------" %}</option>
+                {% for group in groups %}
+                    <option value="{{ group.id }}" {% if group_filter == group.id %}selected{% endif %}>{{ group }}</option>
+                {% endfor %}
+            </select>
+
+            <!-- Search button -->
             <button type="submit" class="btn btn-primary">{% trans "Search" %}</button>
         </form>
         <a href="{% url 'student_add' %}" class="btn btn-success">{% trans "Add Student" %}</a>
@@ -53,7 +71,7 @@
         <ul class="pagination justify-content-center">
             {% if page_obj.has_previous %}
             <li class="page-item">
-                <a class="page-link" href="?q={{ search_query }}&page={{ page_obj.previous_page_number }}" aria-label="Previous">
+                <a class="page-link" href="?q={{ search_query }}&gender={{ gender_filter }}&group={{ group_filter }}&page={{ page_obj.previous_page_number }}" aria-label="Previous">
                     <span aria-hidden="true">&laquo;</span>
                 </a>
             </li>
@@ -67,13 +85,13 @@
                 {% if page_obj.number == num %}
                 <li class="page-item active"><span class="page-link">{{ num }}</span></li>
                 {% else %}
-                <li class="page-item"><a class="page-link" href="?q={{ search_query }}&page={{ num }}">{{ num }}</a></li>
+                <li class="page-item"><a class="page-link" href="?q={{ search_query }}&gender={{ gender_filter }}&group={{ group_filter }}&page={{ num }}">{{ num }}</a></li>
                 {% endif %}
             {% endfor %}
 
             {% if page_obj.has_next %}
             <li class="page-item">
-                <a class="page-link" href="?q={{ search_query }}&page={{ page_obj.next_page_number }}" aria-label="Next">
+                <a class="page-link" href="?q={{ search_query }}&gender={{ gender_filter }}&group={{ group_filter }}&page={{ page_obj.next_page_number }}" aria-label="Next">
                     <span aria-hidden="true">&raquo;</span>
                 </a>
             </li>

@@ -1,13 +1,8 @@
+{% load static %}
 {% load i18n %}
-<div class="d-flex flex-column flex-shrink-0 p-3 shadow sidebar-bg">
-    <a href="{% url 'home' %}" 
-       class="d-flex align-items-center justify-content-center mb-3 mb-md-0 link-dark text-decoration-none">
-        <i class="bi bi-book-half fs-2 me-2"></i>
-        <span class="fs-4">{% trans "Quran App" %}</span>
-    </a>
 
-    <hr>
 
+<div class="d-flex flex-column flex-shrink-0 p-1 shadow sidebar-bg sidebar-text-white">
     <ul class="nav nav-pills flex-column mb-auto">
         <!-- Home -->
         <li class="nav-item">
@@ -20,7 +15,7 @@
         <!-- Students -->
         <li>
             <a href="{% url 'student_list' %}" 
-               class="nav-link {% if request.resolver_match.url_name == 'student_list' %}active{% endif %}">
+                class="nav-link {% if request.resolver_match.url_name|slice:":8" == "student_" %}active{% endif %}">
                 <i class="bi bi-person-fill me-2"></i>
                 {% trans "Student" %}
             </a>
@@ -28,7 +23,7 @@
         <!-- Teachers -->
         <li>
             <a href="{% url 'teacher_list' %}" 
-               class="nav-link {% if request.resolver_match.url_name == 'teacher_list' %}active{% endif %}">
+                class="nav-link {% if request.resolver_match.url_name|slice:":8" == "teacher_" %}active{% endif %}">
                 <i class="bi bi-person-badge-fill me-2"></i>
                 {% trans "Teacher" %}
             </a>
@@ -37,7 +32,7 @@
         {% if request.user.is_superuser or perms.Quran.view_course %}
             <li>
                 <a href="{% url 'course_list' %}" 
-                class="nav-link {% if request.resolver_match.url_name == 'course_list' %}active{% endif %}">
+                    class="nav-link {% if request.resolver_match.url_name|slice:":7" == "course_" %}active{% endif %}">
                     <i class="bi bi-journal-bookmark-fill me-2"></i>
                     {% trans "Course" %}
                 </a>
@@ -46,15 +41,15 @@
         <!-- Groups -->
         <li>
             <a href="{% url 'class_group_list' %}" 
-               class="nav-link {% if request.resolver_match.url_name == 'class_group_list' %}active{% endif %}">
-                <i class="bi bi-people-fill"></i>
+                class="nav-link {% if request.resolver_match.url_name|slice:":12" == "class_group_" %}active{% endif %}">
+                <i class="bi bi-people-fill me-2"></i>
                 {% trans "Group" %}
             </a>
         </li>
         <!-- Attendance -->
         <li>
             <a href="{% url 'attendance' %}" 
-               class="nav-link {% if request.resolver_match.url_name == 'attendance' %}active{% endif %}">
+                class="nav-link {% if request.resolver_match.url_name == 'attendance' %}active{% endif %}">
                 <i class="bi bi-calendar-check-fill me-2"></i>
                 {% trans "Attendance" %}
             </a>
@@ -62,49 +57,51 @@
         <!-- Invoice -->
         <li>
             <a href="{% url 'invoice' %}" 
-               class="nav-link {% if request.resolver_match.url_name == 'invoice' %}active{% endif %}">
+                class="nav-link {% if request.resolver_match.url_name == 'invoice' %}active{% endif %}">
                 <i class="bi bi-receipt-cutoff me-2"></i>
                 {% trans "Invoice" %}
             </a>
         </li>
-        <!-- Monthly Summary Report -->
+        <!-- Payment Status -->
+        <li>
+            <a href="{% url 'payment_status' %}" 
+                class="nav-link {% if request.resolver_match.url_name == 'payment_status' %}active{% endif %}">
+                <i class="bi bi-receipt-cutoff me-2"></i>
+                {% trans "Payment Status" %}
+            </a>
+        </li>
+        <!-- Summary Report -->
         {% if request.user.is_superuser %}
             <li>
-                <a href="{% url 'monthly_summary_report' %}" 
-                class="nav-link {% if request.resolver_match.url_name == 'monthly_summary_report' %}active{% endif %}">
-                    <i class="bi bi-journal-bookmark-fill me-2"></i>
-                    {% trans "Monthly Summary Report" %}
+                <a href="{% url 'summary_report' %}" 
+                    class="nav-link {% if request.resolver_match.url_name == 'summary_report' %}active{% endif %}">
+                    <i class="bi bi-file-earmark-text me-2"></i>
+                    {% trans "Summary Report" %}
                 </a>
             </li>
         {% endif %}
     </ul>
+
+    <a href="{% url 'home' %}" class="d-flex align-items-center justify-content-center mb-3 mb-md-0 text-decoration-none">
+        <img src="{% static 'logo.png' %}" alt="Quran App Logo" style="width: 160px; height: 160px; border-radius: 50%;">
+    </a>
     <hr>
 
     <!-- Language -->
     <form action="{% url 'set_language' %}" method="post" class="mb-3">
         {% csrf_token %}
-        <label class="form-label small text-muted">{% trans "Language" %}</label>
         {% get_current_language as LANGUAGE_CODE %}
-        <select name="language" class="form-select form-select-sm" onchange="this.form.submit()">
+        <select name="language" class="form-select" onchange="this.form.submit()">
             <option value="en" {% if LANGUAGE_CODE == 'en' %}selected{% endif %}>English</option>
             <option value="ar" {% if LANGUAGE_CODE == 'ar' %}selected{% endif %}>العربية</option>
         </select>
     </form>
-
-    <div class="dropdown">
-        <a href="#" class="d-flex align-items-center link-dark text-decoration-none dropdown-toggle"
-        id="dropdownUser2" data-bs-toggle="dropdown" aria-expanded="false">
-            <strong>{{ request.user.get_full_name|default:request.user.username }}</strong>
-        </a>
-        <ul class="dropdown-menu text-small shadow" aria-labelledby="dropdownUser2">
-            <li>
-                <form method="post" action="{% url 'logout' %}" style="display:inline;">
-                    {% csrf_token %}
-                    <button type="submit" class="dropdown-item">
-                        <i class="bi bi-box-arrow-right me-2"></i>{% trans "Sign out" %}
-                    </button>
-                </form>
-            </li>
-        </ul>
-    </div>
+    
+    <!-- Logout -->
+    <form action="{% url 'logout' %}" method="post" class="mb-3">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-light btn w-100 d-flex align-items-center justify-content-center">
+            {% trans "Sign out" %}
+        </button>
+    </form>
 </div>
