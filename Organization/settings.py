@@ -10,12 +10,30 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.0/ref/settings/
 """
 
+import os
 from pathlib import Path
 from django.utils.translation import gettext_lazy as _
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+# External storage for DB and static files
+# Windows
+if os.name == 'nt':
+    # AppData/Quran
+    DATA_DIR = os.path.join(os.getenv('APPDATA'), 'Quran')
+# Linux / Mac
+else:
+    # ~/.quran
+    DATA_DIR = os.path.expanduser('~/.quran')
+
+# Create the directory if it does not exist
+os.makedirs(DATA_DIR, exist_ok=True)
+
+# Paths for DB and static files
+DB_PATH = os.path.join(DATA_DIR, 'db.sqlite3')
+STATIC_PATH = os.path.join(DATA_DIR, 'staticfiles_build')
+        
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
@@ -44,6 +62,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    "whitenoise.middleware.WhiteNoiseMiddleware",
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.locale.LocaleMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -58,7 +77,6 @@ ROOT_URLCONF = 'Organization.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        # 'DIRS': [],
         'DIRS': [BASE_DIR / "templates"],
         'APP_DIRS': True,
         'OPTIONS': {
@@ -97,7 +115,7 @@ LOGOUT_REDIRECT_URL = '/login/'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'NAME': DB_PATH,
     }
 }
 
@@ -142,17 +160,18 @@ USE_L10N = True
 
 USE_TZ = True
 
+# Static files
+STATIC_URL = '/static/'
 
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/5.0/howto/static-files/
+# Use project folder for static files build
+STATIC_ROOT = STATIC_PATH
 
-STATIC_URL = 'static/'
-
+# Add app-level static dirs if needed
 STATICFILES_DIRS = [
-    BASE_DIR / "static",
+    os.path.join(BASE_DIR, 'static'),
 ]
 
-STATIC_ROOT = BASE_DIR / "staticfiles"
+STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
