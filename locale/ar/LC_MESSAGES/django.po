@@ -223,7 +223,7 @@ msgstr "وقت الانتهاء"
 
 #: Quran/models.py:115 Quran/templates/Quran/attendance/attendance.html:67
 #: Quran/templates/Quran/invoice/invoice.html:58
-#: Quran/templates/Quran/student_payment_status/student_payment_status_list.html:25
+#: Quran/templates/Quran/student_payment_status/student_payment_status_list.html:61
 msgid "Student Name"
 msgstr "اسم الطالب"
 
@@ -254,18 +254,19 @@ msgstr "الطالب"
 
 #: Quran/models.py:145 Quran/models.py:194
 #: Quran/templates/Quran/invoice/print_invoice.html:21
+#: Quran/templates/Quran/student_payment_status/student_payment_status_list.html:59
 msgid "Date"
 msgstr "التاريخ"
 
 #: Quran/models.py:146 Quran/models.py:207
 #: Quran/templates/Quran/reports/summary_report.html:32
-#: Quran/templates/Quran/student_payment_status/student_payment_status_list.html:26
+#: Quran/templates/Quran/student_payment_status/student_payment_status_list.html:62
 msgid "Month"
 msgstr "الشهر"
 
 #: Quran/models.py:147 Quran/models.py:208
 #: Quran/templates/Quran/reports/summary_report.html:42
-#: Quran/templates/Quran/student_payment_status/student_payment_status_list.html:27
+#: Quran/templates/Quran/student_payment_status/student_payment_status_list.html:63
 msgid "Year"
 msgstr "السنة"
 
@@ -567,6 +568,7 @@ msgid "Subscription For"
 msgstr "اشتراك لـ"
 
 #: Quran/templates/Quran/invoice/print_invoice.html:24
+#: Quran/templates/Quran/student_payment_status/student_payment_status_list.html:64
 msgid "Amount"
 msgstr "المبلغ"
 
@@ -584,10 +586,12 @@ msgid "Summary Report"
 msgstr "تقرير الملخص"
 
 #: Quran/templates/Quran/reports/summary_report.html:54
+#: Quran/templates/Quran/student_payment_status/student_payment_status_list.html:43
 msgid "Filter Report"
 msgstr "تصفية التقرير"
 
 #: Quran/templates/Quran/reports/summary_report.html:59
+#: Quran/templates/Quran/student_payment_status/student_payment_status_list.html:48
 msgid "Excel"
 msgstr "إكسل"
 
@@ -621,6 +625,7 @@ msgid "Discount (Previous Months)"
 msgstr "خصم (الأشهر السابقة)"
 
 #: Quran/templates/Quran/reports/summary_report.html:105
+#: Quran/templates/Quran/student_payment_status/student_payment_status_list.html:81
 msgid "Totals"
 msgstr "المجاميع"
 
@@ -670,7 +675,7 @@ msgstr "حالة الدفع"
 msgid "Search by student"
 msgstr "ابحث عن طالب"
 
-#: Quran/templates/Quran/student_payment_status/student_payment_status_list.html:24
+#: Quran/templates/Quran/student_payment_status/student_payment_status_list.html:60
 msgid "Student Code"
 msgstr "رمز الطالب"
 

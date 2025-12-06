@@ -8,83 +8,82 @@
     <h3 class="d-flex justify-content-center gap-3 mt-4">{% trans "Payment Status" %}</h3>
 
     <!-- Search + Add -->
-    <div class="d-flex justify-content-between mb-3">
-        <form method="get" class="d-flex" style="gap: 10px;">
-            <input type="text" name="q" class="form-control"
-                   placeholder="{% trans 'Search by student' %}"
-                   value="{{ search_query }}">
-            <button type="submit" class="btn btn-primary">{% trans "Search" %}</button>
-        </form>
-    </div>
+    <form action="{% url 'payment_status' %}" method="POST">
+        {% csrf_token %}
+        <div class="row g-3 align-items-end">
+            <!-- School -->
+            {% if request.user.is_superuser %}
+                <div class="col-md-3">
+                    <label class="form-label fw-semibold">{% trans "School" %}</label>
+                    <select name="school" class="form-select" required>
+                        <option value="">{% trans "--------" %}</option>
+                        {% for school in schools %}
+                        <option value="{{ school.id }}" {% if school.id == selected_school|add:0 %}selected{% endif %}>
+                            {{ school.name }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+            {% endif %}
+
+            <!-- From date -->
+            <div class="col-md-3">
+                <input type="date" name="date_from" class="form-control" value="{{ from_date|default:today|date:'Y-m-d' }}" max="{{ today|date:'Y-m-d' }}">
+            </div>
+            
+            <!-- To date -->
+            <div class="col-md-3">
+                <input type="date" name="date_to" class="form-control" value="{{ date_to|default:today|date:'Y-m-d' }}" max="{{ today|date:'Y-m-d' }}">
+            </div>
+
+            <!-- Buttons -->
+            <div class="col-md-3 d-flex gap-2">
+                <!-- Filter Button -->
+                <button type="submit" name="action" value="filter" class="btn btn-primary w-100">
+                    <i class="bi bi-search me-1"></i> {% trans "Filter Report" %}
+                </button>
+
+                <!-- Excel Button -->
+                <button type="submit" name="action" value="excel" class="btn btn-success w-100">
+                    <i class="bi bi-file-earmark-excel me-1"></i> {% trans "Excel" %}
+                </button>
+            </div>
+        </div>
+    </form>
 
     <!-- Table -->
-    <table class="table table-bordered table-striped">
-        <thead class="table-light">
-            <tr>
-                <th>{% trans "Student Code" %}</th>
-                <th>{% trans "Student Name" %}</th>
-                <th>{% trans "Month" %}</th>
-                <th>{% trans "Year" %}</th>
-                <th>{% trans "Paid" %}</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for item in student_payment_status %}
-            <tr>
-                <td>{{ item.student.code }}</td>
-                <td>{{ item.student.name }}</td>
-                <td>{{ item.month }}</td>
-                <td>{{ item.year }}</td>
-                <td>
-                    {% if item.is_paid %}
-                        <span class="badge bg-success">{% trans "Paid" %}</span>
-                    {% else %}
-                        <span class="badge bg-danger">{% trans "Not Paid" %}</span>
-                    {% endif %}
-                </td>
-            </tr>
-            {% empty %}
-            <tr>
-                <td colspan="7" class="text-center">{% trans "No payment records found." %}</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+    <div class="table-responsive-custom mt-4">
+        <table class="table table-bordered table-striped full-width-table">
+            <thead class="table-light sticky-header">
+                <tr>
+                    <th>{% trans "Date" %}</th>
+                    <th>{% trans "Student Code" %}</th>
+                    <th>{% trans "Student Name" %}</th>
+                    <th>{% trans "Month" %}</th>
+                    <th>{% trans "Year" %}</th>
+                    <th>{% trans "Amount" %}</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in data %}
+                <tr>
+                    <td>{{ item.date }}</td>
+                    <td>{{ item.student_code }}</td>
+                    <td>{{ item.student_name }}</td>
+                    <td>{{ item.month }}</td>
+                    <td>{{ item.year }}</td>
+                    <td>{{ item.amount }}</td>
+                </tr>
+                {% endfor %}
 
-    <!-- Pagination -->
-    {% if is_paginated %}
-    <nav aria-label="Page navigation">
-        <ul class="pagination justify-content-center">
-
-            {% if page_obj.has_previous %}
-            <li class="page-item">
-                <a class="page-link" href="?q={{ search_query }}&page={{ page_obj.previous_page_number }}" aria-label="Previous">
-                    &laquo;
-                </a>
-            </li>
-            {% else %}
-            <li class="page-item disabled"><span class="page-link">&laquo;</span></li>
-            {% endif %}
-
-            {% for num in paginator.page_range %}
-                {% if page_obj.number == num %}
-                <li class="page-item active"><span class="page-link">{{ num }}</span></li>
-                {% else %}
-                <li class="page-item"><a class="page-link" href="?q={{ search_query }}&page={{ num }}">{{ num }}</a></li>
+                {% if totals %}
+                <tr class="table-secondary fw-bold">
+                    <td colspan="5" class="text-center">{% trans "Totals" %}</td>
+                    <td>{{ totals.total_amount }}</td>
+                </tr>
                 {% endif %}
-            {% endfor %}
-
-            {% if page_obj.has_next %}
-            <li class="page-item">
-                <a class="page-link" href="?q={{ search_query }}&page={{ page_obj.next_page_number }}" aria-label="Next">
-                    &raquo;
-                </a>
-            </li>
-            {% else %}
-            <li class="page-item disabled"><span class="page-link">&raquo;</span></li>
-            {% endif %}
-        </ul>
-    </nav>
-    {% endif %}
+            </tbody>
+        </table>
+    </div>
 </div>
 {% endblock %}

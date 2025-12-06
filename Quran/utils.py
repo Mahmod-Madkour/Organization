@@ -185,3 +185,32 @@ def get_group_summary(school_id, month, year):
 
     return data
 
+def get_payment_summary(school_id, from_date, to_date):
+    filters = {
+        'school_id': school_id
+    }
+
+    if from_date:
+        filters['from_date'] = from_date
+    if to_date:
+        filters['to_date'] = to_date
+
+    data = (
+        StudentPaymentStatus.objects.filter(**filters)
+        .annotate(
+            date=F('invoice__date'),
+            student_code=F('student__code'),
+            student_name=F('student__name'),
+            amount=F('invoice__amount'),
+        )
+        .values(
+            'date',
+            'student_code',
+            'student_name',
+            'month',
+            'year',
+            'amount',
+        )
+    )
+
+    return data
