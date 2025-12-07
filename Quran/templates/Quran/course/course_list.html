@@ -18,6 +18,7 @@
     <table class="table table-bordered table-striped">
         <thead class="table-light">
             <tr>
+                <th>{% trans "#" %}</th>
                 <th>{% trans "Name" %}</th>
                 <th>{% trans "Price" %}</th>
                 <th>{% trans "Status" %}</th>
@@ -27,6 +28,7 @@
         <tbody>
             {% for course in courses %}
             <tr>
+                <td>{{ forloop.counter }}</td>
                 <td>{{ course.name }}</td>
                 <td>{{ course.price }}</td>
                 <td>

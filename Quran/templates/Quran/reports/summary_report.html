@@ -67,7 +67,8 @@
         <table class="table table-bordered table-striped full-width-table">
             <thead class="table-light sticky-header">
                 <tr>
-                    <th class="sticky-col">{% trans "Teacher" %}</th>
+                    <th>{% trans "#" %}</th>
+                    <th>{% trans "Teacher" %}</th>
                     <th>{% trans "Group" %}</th>
                     <th>{% trans "Start Time" %}</th>
                     <th>{% trans "End Time" %}</th>
@@ -85,7 +86,8 @@
             <tbody>
                 {% for group in data %}
                 <tr>
-                    <td class="sticky-col">{{ group.teacher__name }}</td>
+                    <td>{{ forloop.counter }}</td>
+                    <td>{{ group.teacher__name }}</td>
                     <td>{{ group.name }}</td>
                     <td>{{ group.start_time }}</td>
                     <td>{{ group.end_time }}</td>
@@ -102,7 +104,7 @@
 
                 {% if totals %}
                 <tr class="table-secondary fw-bold">
-                    <td colspan="4" class="text-center">{% trans "Totals" %}</td>
+                    <td colspan="5" class="text-center">{% trans "Totals" %}</td>
                     <td>{{ totals.total_students }}</td>
                     <td>{{ totals.students_paid_current }}</td>
                     <td>{{ totals.students_discount_current }}</td>

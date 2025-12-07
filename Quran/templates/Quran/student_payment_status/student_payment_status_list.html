@@ -56,6 +56,7 @@
         <table class="table table-bordered table-striped full-width-table">
             <thead class="table-light sticky-header">
                 <tr>
+                    <th>{% trans "#" %}</th>
                     <th>{% trans "Date" %}</th>
                     <th>{% trans "Student Code" %}</th>
                     <th>{% trans "Student Name" %}</th>
@@ -67,6 +68,7 @@
             <tbody>
                 {% for item in data %}
                 <tr>
+                    <td>{{ forloop.counter }}</td>
                     <td>{{ item.date }}</td>
                     <td>{{ item.student_code }}</td>
                     <td>{{ item.student_name }}</td>
@@ -78,7 +80,7 @@
 
                 {% if totals %}
                 <tr class="table-secondary fw-bold">
-                    <td colspan="5" class="text-center">{% trans "Totals" %}</td>
+                    <td colspan="6" class="text-center">{% trans "Totals" %}</td>
                     <td>{{ totals.total_amount }}</td>
                 </tr>
                 {% endif %}
