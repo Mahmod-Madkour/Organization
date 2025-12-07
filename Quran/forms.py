@@ -7,10 +7,19 @@ from Quran.models import (
 class StudentForm(forms.ModelForm):
     class Meta:
         model = Student
-        fields = ['school', 'name', 'phone', 'gender', 'birth_date', 'academic_year', 'group', 'discount_type', 'is_active']
+        fields = [
+            'school', 'name', 'gender', 'birth_date', 'academic_year', 'level', 'group', 
+            'phone', 'parent_profession',
+            'discount_type', 'registration_date', 'is_active',
+        ]
         widgets = {
             'school': forms.Select(attrs={'class': 'form-select'}),
             'name': forms.TextInput(attrs={'class': 'form-control'}),
+            'gender': forms.Select(attrs={'class': 'form-select'}),
+            'birth_date': forms.DateInput(attrs={'type': 'date','class': 'form-control'}),
+            'academic_year': forms.Select(attrs={'class': 'form-select'}),
+            'level': forms.TextInput(attrs={'class': 'form-control'}),
+            'group': forms.Select(attrs={'class': 'form-select'}),
             'phone': forms.TextInput(attrs={
                 'type': 'tel',
                 'pattern': r'\d{11}',
@@ -18,11 +27,9 @@ class StudentForm(forms.ModelForm):
                 'class': 'form-control',
                 'placeholder': 'Enter 11-digit phone number'
             }),
-            'birth_date': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
-            'gender': forms.Select(attrs={'class': 'form-select'}),
-            'academic_year': forms.Select(attrs={'class': 'form-select'}),
-            'group': forms.Select(attrs={'class': 'form-select'}),
+            'parent_profession': forms.TextInput(attrs={'class': 'form-control'}),
             'discount_type': forms.Select(attrs={'class': 'form-select'}),
+            'registration_date': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
             'is_active': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
         }
 
@@ -35,7 +42,9 @@ class StudentForm(forms.ModelForm):
 class TeacherForm(forms.ModelForm):
     class Meta:
         model = Teacher
-        fields = ['school', 'name', 'id_number', 'phone', 'email', 'gender', 'birth_date', 'is_active', 'description']
+        fields = [
+            'school', 'name', 'id_number', 'phone', 'email', 'gender', 'birth_date', 'qualification', 'description', 'registration_date', 'is_active'
+        ]
         widgets = {
             'school': forms.Select(attrs={'class': 'form-select'}),
             'name': forms.TextInput(attrs={'class': 'form-control'}),
@@ -56,12 +65,13 @@ class TeacherForm(forms.ModelForm):
             'email': forms.EmailInput(attrs={'class': 'form-control'}),
             'birth_date': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
             'gender': forms.Select(attrs={'class': 'form-select'}),
-            'is_active': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
+            'qualification': forms.TextInput(attrs={'class': 'form-control'}),
             'description': forms.Textarea(attrs={
                 'class': 'form-control',
                 'rows': 4,
-                'placeholder': 'Enter a description or notes about the teacher'
             }),
+            'registration_date': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
+            'is_active': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
         }
 
     def __init__(self, *args, **kwargs):

@@ -89,6 +89,22 @@
                             </div>
                         </td>
                     </tr>
+                    <tr>
+                        <th>{% trans "Status" %}</th>
+                        <td>
+                            {% if student_data.status %}
+                                <ul class="list-unstyled m-0 p-0">
+                                    {% for status in student_data.status %}
+                                        <li class="d-inline-block me-1 mb-1">
+                                            <span class="badge bg-danger" style="font-size: 0.8rem; padding: 0.5em 0.7em;">{{ status }}</span>
+                                        </li>
+                                    {% endfor %}
+                                </ul>
+                            {% else %}
+                                <span class="text-success">&#10004;</span>
+                            {% endif %}
+                        </td>
+                    </tr>
                 </tbody>
             </table>
 

@@ -5,6 +5,7 @@ from django.urls import reverse, reverse_lazy
 from django.shortcuts import redirect, render, get_object_or_404
 from django.core.exceptions import ValidationError
 from django.contrib.admin.views.decorators import staff_member_required
+from django.utils.translation import gettext as _
 from django.utils.decorators import method_decorator
 from django.db.models import Q
 from django.views.generic import (
@@ -366,6 +367,7 @@ class InvoiceCreateView(TemplateView):
     def build_student_context(self, student):
         """Return context dictionary for a student."""
         expected_price = Invoice.calculate_expected_amount(student)
+        missing = get_missing_months_for_student(student)
         return {
             "id": student.id,
             "code": student.code,
@@ -373,6 +375,7 @@ class InvoiceCreateView(TemplateView):
             "group": student.group.name,
             "course": student.group.course.name,
             "price": expected_price,
+            "status": missing,
         }
 
     def get_context_data(self, **kwargs):
@@ -400,11 +403,11 @@ class InvoiceCreateView(TemplateView):
 
         student = self.get_student(code=selected_code, name=selected_name)
         if not student:
-            context["error_msg"] = "Student not found."
+            context["error_msg"] = _("Student not found.")
             return render(request, self.template_name, context)
 
         if student.discount_type == 'full':
-            context["error_msg"] = "Student is exempt."
+            context["error_msg"] = _("Student is exempt.")
             return render(request, self.template_name, context)
 
         context["student_data"] = self.build_student_context(student)
@@ -418,18 +421,18 @@ class InvoiceCreateView(TemplateView):
 
         student = self.get_student(code=code)
         if not student:
-            context["error_msg"] = "Student not found."
+            context["error_msg"] = _("Student not found.")
             return render(request, self.template_name, context)
 
         if student.discount_type == 'full':
-            context["error_msg"] = "Student is exempt."
+            context["error_msg"] = _("Student is exempt.")
             return render(request, self.template_name, context)
 
         context["student_data"] = self.build_student_context(student)
 
         # Check duplicate invoice
         if Invoice.objects.filter(student=student, month=month, year=year).exists():
-            context["error_msg"] = f"An invoice already exists for {month}/{year}."
+            context["error_msg"] = _(f"An invoice already exists for {month}-{year}.")
             return self.render_to_response(context)
 
         # Create invoice safely
@@ -452,7 +455,13 @@ class InvoiceCreateView(TemplateView):
 @staff_member_required
 def print_invoice(request, invoice_id):
     invoice = get_object_or_404(Invoice, id=invoice_id)
-    return render(request, 'Quran/invoice/print_invoice.html', {'invoice': invoice})
+    missing = get_missing_months_for_student(invoice.student)
+
+    context = {
+        'invoice': invoice,
+        'status': missing,
+    }
+    return render(request, 'Quran/invoice/print_invoice.html', context)
 
 
 # --------------------- Student Payment Status ---------------------

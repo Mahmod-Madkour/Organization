@@ -20,8 +20,17 @@
                 <p><strong>{% trans "Invoice ID" %}: </strong>{{ invoice.id }}</p>
                 <p><strong>{% trans "Date" %}: </strong>{{ invoice.date }}</p>
                 <p><strong>{% trans "Student" %}: </strong>{{ invoice.student.name }}</p>
+                <p><strong>{% trans "Student" %}: </strong>{{ invoice.student.group.course.name }}</p>
                 <p><strong>{% trans "Subscription For" %}: </strong>{{ invoice.month }} - {{ invoice.year }}</p>
                 <p><strong>{% trans "Amount" %}: </strong>{{ invoice.amount }}</p>
+                {% if status %}
+                    <p>
+                        <strong>{% trans "Months Late" %}: </strong>
+                        {% for sts in status %}
+                            <span style="font-size: 0.9rem; font-weight: bold; padding: 0.5em;">{{ sts }}</span>
+                        {% endfor %}
+                    </p>
+                {% endif %}
             </div>
         </div>
 
