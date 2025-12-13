@@ -22,6 +22,13 @@ GENDER_CHOICES = [
     ('F', _('Female'))
 ]
 
+MARITAL_STATUS_CHOICES = [
+    ('S', _('Single')),
+    ('M', _('Married')),
+    ('D', _('Divorced')),
+    ('W', _('Widowed')),
+]
+
 ACADEMIC_YEAR_CHOICES = [
     ('pre_primary', _('Pre-Primary')),
     ('primary_1', _('Primary 1')),
@@ -40,6 +47,7 @@ ACADEMIC_YEAR_CHOICES = [
     ('university_2', _('University Year 2')),
     ('university_3', _('University Year 3')),
     ('university_4', _('University Year 4')),
+    ('graduate', _('Graduate')),
 ]
 
 DISCOUNT_TYPE_CHOICES = [
@@ -74,6 +82,7 @@ class Teacher(models.Model):
     phone = models.CharField(max_length=11, validators=[phone_regex], verbose_name=_("Phone Number"))
     email = models.EmailField(unique=True, blank=True, null=True, verbose_name=_("Email"))
     gender = models.CharField(max_length=1, choices=GENDER_CHOICES, verbose_name=_("Gender"))
+    marital_status = models.CharField(max_length=1, choices=MARITAL_STATUS_CHOICES, verbose_name=_("Marital Status"))
     birth_date = models.DateField(blank=True, null=True, verbose_name=_("Birth Date"))
     qualification = models.CharField(max_length=100, verbose_name=_("Qualification"))
     is_active = models.BooleanField(default=True, verbose_name=_("Active"))

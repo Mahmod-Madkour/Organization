@@ -28,12 +28,12 @@
 
             <!-- From date -->
             <div class="col-md-3">
-                <input type="date" name="date_from" class="form-control" value="{{ from_date|default:today|date:'Y-m-d' }}" max="{{ today|date:'Y-m-d' }}">
+                <input type="date" name="from_date" class="form-control" value="{{ from_date|default:today }}" max="{{ today }}">
             </div>
             
             <!-- To date -->
             <div class="col-md-3">
-                <input type="date" name="date_to" class="form-control" value="{{ date_to|default:today|date:'Y-m-d' }}" max="{{ today|date:'Y-m-d' }}">
+                <input type="date" name="to_date" class="form-control" value="{{ to_date|default:today }}" max="{{ today }}">
             </div>
 
             <!-- Buttons -->

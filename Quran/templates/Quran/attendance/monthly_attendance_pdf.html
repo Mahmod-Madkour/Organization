@@ -1,0 +1,70 @@
+{% load static %}
+{% load i18n %}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>{% trans "Monthly Attendance Report" %}</title>
+    
+    <!-- Bootstrap & Select2 & Custom CSS -->
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+
+    <style>
+        @page {
+            size: A4 landscape;
+            margin: 0.5cm;
+        }
+        body {
+            margin: 0;
+            padding: 10px;
+            font-size: 10px;
+            font-family: 'Cairo', monospace;
+            padding: 2px 4px !important;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="text-center mb-3">
+        <h1 class="fw-bold">
+            {% trans "Monthly Attendance Report" %} - {{ selected_month }} {{ selected_year }}
+        </h1>
+    </div>
+    
+    <!-- Attendance Table Only -->
+    <div class="table-responsive">
+        <table class="table table-bordered table-sm table-striped">
+            <thead class="table-light">
+                <tr>
+                    <th class="text-center fw-bold">{% trans "ID" %}</th>
+                    <th class="text-center fw-bold">{% trans "Name" %}</th>
+
+                    {% for day in days %}
+                        <th class="text-center fw-bold">{{ day }}</th>
+                    {% endfor %}
+                    <th class="text-center fw-bold">{% trans "Present" %}</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for student in data.students %}
+                <tr>
+                    <td class="text-center fw-bold">{{ student.id }}</td>
+                    <td class="text-center fw-bold">{{ student.name }}</td>
+                    
+                    {% for present in student.attendance %}
+                        <td class="text-center">
+                            {% if present %}✓{% else %}-{% endif %}
+                        </td>
+                    {% endfor %}
+                    
+                    <td class="text-center fw-bold">
+                        {{ student.total_present }} / {{ days|length }}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>

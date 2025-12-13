@@ -20,7 +20,8 @@ def handle_academic_year():
         'university_1': 'university_2',
         'university_2': 'university_3',
         'university_3': 'university_4',
-        'university_4': None,
+        'university_4': 'graduate',
+        'graduate': 'graduate',
     }
     students = Student.objects.all()
     for student in students:

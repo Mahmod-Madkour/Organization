@@ -43,7 +43,8 @@ class TeacherForm(forms.ModelForm):
     class Meta:
         model = Teacher
         fields = [
-            'school', 'name', 'id_number', 'phone', 'email', 'gender', 'birth_date', 'qualification', 'description', 'registration_date', 'is_active'
+            'school', 'name', 'id_number', 'phone', 'email', 'gender', 'marital_status', 'birth_date',
+            'qualification', 'description', 'registration_date', 'is_active'
         ]
         widgets = {
             'school': forms.Select(attrs={'class': 'form-select'}),
@@ -65,6 +66,7 @@ class TeacherForm(forms.ModelForm):
             'email': forms.EmailInput(attrs={'class': 'form-control'}),
             'birth_date': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
             'gender': forms.Select(attrs={'class': 'form-select'}),
+            'marital_status': forms.Select(attrs={'class': 'form-select'}),
             'qualification': forms.TextInput(attrs={'class': 'form-control'}),
             'description': forms.Textarea(attrs={
                 'class': 'form-control',

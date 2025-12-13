@@ -1,0 +1,100 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Monthly Attendance" %}{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+
+    <h5 class="text-center fw-bold text-primary">
+        {% trans "Monthly Attendance" %}
+    </h5>
+
+    <!-- Report Filter Form -->
+    <form action="{% url 'monthly_attendance' %}" method="POST">
+        {% csrf_token %}
+        <div class="row g-3 align-items-end">
+            <!-- School -->
+            {% if request.user.is_superuser %}
+                <div class="col-md-3">
+                    <label class="form-label fw-semibold">{% trans "School" %}</label>
+                    <select name="school" class="form-select" required>
+                        <option value="">{% trans "--------" %}</option>
+                        {% for school in schools %}
+                        <option value="{{ school.id }}" {% if school.id == selected_school|add:0 %}selected{% endif %}>
+                            {{ school.name }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+            {% endif %}
+
+            <!-- Month -->
+            <div class="col-md-3">
+                <label class="form-label fw-semibold">{% trans "Month" %}</label>
+                <select name="month" class="form-select" required>
+                    {% for month in months %}
+                    <option value="{{ month }}" {% if month == selected_month %}selected{% endif %}>{{ month }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <!-- Year -->
+            <div class="col-md-3">
+                <label class="form-label fw-semibold">{% trans "Year" %}</label>
+                <select name="year" class="form-select" required>
+                    {% for year in years %}
+                    <option value="{{ year }}" {% if year == selected_year %}selected{% endif %}>{{ year }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            
+            <!-- Buttons -->
+            <div class="col-md-3 d-flex gap-2">
+                <!-- Filter Button -->
+                <button type="submit" name="action" value="filter" class="btn btn-primary w-100">
+                    <i class="bi bi-search me-1"></i> {% trans "Filter Report" %}
+                </button>
+
+                <!-- PDF Button -->
+                <button type="submit" name="action" value="pdf" class="btn btn-success w-100">
+                    <i class="bi bi-file-earmark-pdf me-1"></i> {% trans "PDF" %}
+                </button>
+            </div>
+
+        </div>
+    </form>
+
+    <div class="table-responsive-custom mt-4">
+        <table class="table table-bordered table-striped full-width-table">
+
+            <thead class="table-light sticky-header">
+                <tr>
+                    <th>{% trans "#" %}</th>
+                    <th>{% trans "Student" %}</th>
+                    {% for day in data.days %}
+                        <th>{{ day }}</th>
+                    {% endfor %}
+                    <th>{% trans "Present" %}</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for student in data.students %}
+                <tr>
+                    <td>{{ forloop.counter }}</td>
+                    <td>{{ student.name }}</td>
+
+                    {% for present in student.attendance %}
+                        <td class="{% if present %}present{% else %}absent{% endif %}">
+                            {% if present %}✓{% else %}-{% endif %}
+                        </td>
+                    {% endfor %}
+                    
+                    <td>{{ student.total_present }} / {{ data.days|length }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

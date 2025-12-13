@@ -54,6 +54,14 @@
                 {% trans "Attendance" %}
             </a>
         </li>
+        <!-- Monthly Attendance -->
+        <li>
+            <a href="{% url 'monthly_attendance' %}" 
+                class="nav-link {% if request.resolver_match.url_name == 'monthly_attendance' %}active{% endif %}">
+                <i class="bi bi-calendar-check-fill me-2"></i>
+                {% trans "Monthly Attendance" %}
+            </a>
+        </li>
         <!-- Invoice -->
         <li>
             <a href="{% url 'invoice' %}" 
@@ -83,7 +91,7 @@
     </ul>
 
     <a href="{% url 'home' %}" class="d-flex align-items-center justify-content-center mb-3 mb-md-0 text-decoration-none">
-        <img src="{% static 'logo.png' %}" alt="Quran App Logo" style="width: 160px; height: 160px; border-radius: 50%;">
+        <img src="{% static 'logo.png' %}" alt="{% trans 'Quran App Logo' %}" style="width: 160px; height: 160px; border-radius: 50%;">
     </a>
     <hr>
 
@@ -92,8 +100,8 @@
         {% csrf_token %}
         {% get_current_language as LANGUAGE_CODE %}
         <select name="language" class="form-select" onchange="this.form.submit()">
-            <option value="en" {% if LANGUAGE_CODE == 'en' %}selected{% endif %}>English</option>
-            <option value="ar" {% if LANGUAGE_CODE == 'ar' %}selected{% endif %}>العربية</option>
+            <option value="en" {% if LANGUAGE_CODE == 'en' %}selected{% endif %}>{% trans "English" %}</option>
+            <option value="ar" {% if LANGUAGE_CODE == 'ar' %}selected{% endif %}>{% trans "Arabic" %}</option>
         </select>
     </form>
     

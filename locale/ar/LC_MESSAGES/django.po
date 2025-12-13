@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-11-29 20:45+0000\n"
+"POT-Creation-Date: 2025-12-13 10:07+0000\n"
 "PO-Revision-Date: 2025-11-29 20:37+0200\n"
 "Last-Translator: Cascade <cascade@example.com>\n"
 "Language-Team: Arabic\n"
@@ -18,11 +18,11 @@ msgstr ""
 "Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 "
 "&& n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5;\n"
 
-#: Organization/settings.py:130
+#: Organization/settings.py:131 templates/includes/sidebar.html:103
 msgid "English"
 msgstr "الإنجليزية"
 
-#: Organization/settings.py:131
+#: Organization/settings.py:132 templates/includes/sidebar.html:104
 msgid "Arabic"
 msgstr "العربية"
 
@@ -43,279 +43,328 @@ msgid "Female"
 msgstr "أنثى"
 
 #: Quran/models.py:26
+msgid "Single"
+msgstr "أعزب"
+
+#: Quran/models.py:27
+msgid "Married"
+msgstr "متزوج"
+
+#: Quran/models.py:28
+msgid "Divorced"
+msgstr "مطلّق"
+
+#: Quran/models.py:29
+msgid "Widowed"
+msgstr "أرمل"
+
+#: Quran/models.py:33
 msgid "Pre-Primary"
 msgstr "مرحلة ما قبل الابتدائي"
 
-#: Quran/models.py:27
+#: Quran/models.py:34
 msgid "Primary 1"
 msgstr "الصف الأول الابتدائي"
 
-#: Quran/models.py:28
+#: Quran/models.py:35
 msgid "Primary 2"
 msgstr "الصف الثاني الابتدائي"
 
-#: Quran/models.py:29
+#: Quran/models.py:36
 msgid "Primary 3"
 msgstr "الصف الثالث الابتدائي"
 
-#: Quran/models.py:30
+#: Quran/models.py:37
 msgid "Primary 4"
 msgstr "الصف الرابع الابتدائي"
 
-#: Quran/models.py:31
+#: Quran/models.py:38
 msgid "Primary 5"
 msgstr "الصف الخامس الابتدائي"
 
-#: Quran/models.py:32
+#: Quran/models.py:39
 msgid "Primary 6"
 msgstr "الصف السادس الابتدائي"
 
-#: Quran/models.py:33
+#: Quran/models.py:40
 msgid "Middle 1"
 msgstr "الصف الأول المتوسط"
 
-#: Quran/models.py:34
+#: Quran/models.py:41
 msgid "Middle 2"
 msgstr "الصف الثاني المتوسط"
 
-#: Quran/models.py:35
+#: Quran/models.py:42
 msgid "Middle 3"
 msgstr "الصف الثالث المتوسط"
 
-#: Quran/models.py:36
+#: Quran/models.py:43
 msgid "High 1"
 msgstr "الصف الأول الثانوي"
 
-#: Quran/models.py:37
+#: Quran/models.py:44
 msgid "High 2"
 msgstr "الصف الثاني الثانوي"
 
-#: Quran/models.py:38
+#: Quran/models.py:45
 msgid "High 3"
 msgstr "الصف الثالث الثانوي"
 
-#: Quran/models.py:39
+#: Quran/models.py:46
 msgid "University Year 1"
 msgstr "السنة الأولى في الجامعة"
 
-#: Quran/models.py:40
+#: Quran/models.py:47
 msgid "University Year 2"
 msgstr "السنة الثانية في الجامعة"
 
-#: Quran/models.py:41
+#: Quran/models.py:48
 msgid "University Year 3"
 msgstr "السنة الثالثة في الجامعة"
 
-#: Quran/models.py:42
+#: Quran/models.py:49
 msgid "University Year 4"
 msgstr "السنة الرابعة في الجامعة"
 
-#: Quran/models.py:46
+#: Quran/models.py:50
+msgid "Graduate"
+msgstr "خريج"
+
+#: Quran/models.py:54
 msgid "No discount"
 msgstr "لا يوجد خصم"
 
-#: Quran/models.py:47
+#: Quran/models.py:55
 msgid "Have discount"
 msgstr "يوجد خصم"
 
-#: Quran/models.py:48
+#: Quran/models.py:56
 msgid "Full discount"
 msgstr "خصم كامل"
 
-#: Quran/models.py:57
+#: Quran/models.py:65
 msgid "School Name"
 msgstr "اسم المدرسة"
 
-#: Quran/models.py:58
+#: Quran/models.py:66
 msgid "School Code"
 msgstr "رمز المدرسة"
 
-#: Quran/models.py:59 Quran/models.py:78 Quran/models.py:92 Quran/models.py:106
-#: Quran/models.py:123
+#: Quran/models.py:67 Quran/models.py:88 Quran/models.py:102
+#: Quran/models.py:116 Quran/models.py:135
 msgid "Active"
 msgstr "نشط"
 
-#: Quran/models.py:60 Quran/models.py:81 Quran/models.py:93 Quran/models.py:107
-#: Quran/models.py:125 Quran/models.py:149 Quran/models.py:196
-#: Quran/models.py:210 Quran/models.py:219
+#: Quran/models.py:68 Quran/models.py:91 Quran/models.py:103
+#: Quran/models.py:117 Quran/models.py:137 Quran/models.py:161
+#: Quran/models.py:208 Quran/models.py:222 Quran/models.py:231
 msgid "Updated At"
 msgstr "تم التحديث في"
 
-#: Quran/models.py:66 Quran/models.py:71 Quran/models.py:88 Quran/models.py:100
-#: Quran/models.py:114 Quran/models.py:143 Quran/models.py:192
-#: Quran/models.py:204 Quran/models.py:216
+#: Quran/models.py:74 Quran/models.py:79 Quran/models.py:98 Quran/models.py:110
+#: Quran/models.py:124 Quran/models.py:155 Quran/models.py:204
+#: Quran/models.py:216 Quran/models.py:228
+#: Quran/templates/Quran/attendance/monthly_attendance.html:20
 #: Quran/templates/Quran/reports/summary_report.html:19
+#: Quran/templates/Quran/student_payment_status/student_payment_status_list.html:17
 msgid "School"
 msgstr "المدرسة"
 
-#: Quran/models.py:67
+#: Quran/models.py:75
 msgid "Schools"
 msgstr "المدارس"
 
-#: Quran/models.py:72 Quran/templates/Quran/teacher/teacher_list.html:22
+#: Quran/models.py:80
+#: Quran/templates/Quran/attendance/monthly_attendance_pdf.html:40
+#: Quran/templates/Quran/teacher/teacher_list.html:23
 msgid "ID"
 msgstr "معرف"
 
-#: Quran/models.py:73
+#: Quran/models.py:81
 msgid "Teacher Name"
 msgstr "اسم المعلم"
 
-#: Quran/models.py:74 Quran/models.py:117
+#: Quran/models.py:82 Quran/models.py:132
 msgid "Phone Number"
 msgstr "رقم الهاتف"
 
-#: Quran/models.py:75
+#: Quran/models.py:83
 msgid "Email"
 msgstr "البريد الإلكتروني"
 
-#: Quran/models.py:76 Quran/models.py:118
-#: Quran/templates/Quran/student/student_list.html:42
-#: Quran/templates/Quran/teacher/teacher_list.html:24
+#: Quran/models.py:84 Quran/models.py:127
+#: Quran/templates/Quran/student/student_list.html:43
+#: Quran/templates/Quran/teacher/teacher_list.html:25
 msgid "Gender"
 msgstr "النوع"
 
-#: Quran/models.py:77 Quran/models.py:119
+#: Quran/models.py:85
+msgid "Marital Status"
+msgstr "الحالة الاجتماعية"
+
+#: Quran/models.py:86 Quran/models.py:128
 msgid "Birth Date"
 msgstr "تاريخ الميلاد"
 
-#: Quran/models.py:79 Quran/models.py:124
+#: Quran/models.py:87
+msgid "Qualification"
+msgstr "مؤهل"
+
+#: Quran/models.py:89 Quran/models.py:136
 msgid "Registration Date"
 msgstr "تاريخ التسجيل"
 
-#: Quran/models.py:80 Quran/models.py:91
+#: Quran/models.py:90 Quran/models.py:101
 msgid "Description"
 msgstr "الوصف"
 
-#: Quran/models.py:89
+#: Quran/models.py:99
 msgid "Course Name"
 msgstr "اسم الدورة"
 
-#: Quran/models.py:90 Quran/templates/Quran/course/course_list.html:22
-#: Quran/templates/Quran/invoice/invoice.html:70
+#: Quran/models.py:100 Quran/templates/Quran/course/course_list.html:23
+#: Quran/templates/Quran/invoice/invoice.html:69
 msgid "Price"
 msgstr "السعر"
 
-#: Quran/models.py:101
+#: Quran/models.py:111
 msgid "Group Name"
 msgstr "اسم المجموعة"
 
-#: Quran/models.py:102
-#: Quran/templates/Quran/class_group/class_group_list.html:22
-#: Quran/templates/Quran/invoice/invoice.html:66
+#: Quran/models.py:112
+#: Quran/templates/Quran/class_group/class_group_list.html:23
+#: Quran/templates/Quran/invoice/invoice.html:65
+#: Quran/templates/Quran/invoice/print_invoice.html:23
 #: templates/includes/sidebar.html:37
 msgid "Course"
 msgstr "الدورة"
 
-#: Quran/models.py:103
-#: Quran/templates/Quran/class_group/class_group_list.html:23
-#: Quran/templates/Quran/reports/summary_report.html:70
+#: Quran/models.py:113
+#: Quran/templates/Quran/class_group/class_group_list.html:24
+#: Quran/templates/Quran/reports/summary_report.html:71 Quran/views.py:947
 #: templates/includes/sidebar.html:28
 msgid "Teacher"
 msgstr "المعلم"
 
-#: Quran/models.py:104 Quran/templates/Quran/reports/summary_report.html:72
+#: Quran/models.py:114 Quran/templates/Quran/reports/summary_report.html:73
 msgid "Start Time"
 msgstr "وقت البدء"
 
-#: Quran/models.py:105 Quran/templates/Quran/reports/summary_report.html:73
+#: Quran/models.py:115 Quran/templates/Quran/reports/summary_report.html:74
 msgid "End Time"
 msgstr "وقت الانتهاء"
 
-#: Quran/models.py:115 Quran/templates/Quran/attendance/attendance.html:67
-#: Quran/templates/Quran/invoice/invoice.html:58
-#: Quran/templates/Quran/student_payment_status/student_payment_status_list.html:61
+#: Quran/models.py:125 Quran/templates/Quran/attendance/attendance.html:66
+#: Quran/templates/Quran/invoice/invoice.html:57
+#: Quran/templates/Quran/student_payment_status/student_payment_status_list.html:62
+#: Quran/views.py:736
 msgid "Student Name"
 msgstr "اسم الطالب"
 
-#: Quran/models.py:116 Quran/templates/Quran/student/student_list.html:39
+#: Quran/models.py:126 Quran/templates/Quran/student/student_list.html:40
 msgid "Code"
 msgstr "الرمز"
 
-#: Quran/models.py:120
+#: Quran/models.py:129
 msgid "Academic Year"
 msgstr "السنة الدراسية"
 
-#: Quran/models.py:121 Quran/templates/Quran/invoice/invoice.html:62
-#: Quran/templates/Quran/reports/summary_report.html:71
-#: Quran/templates/Quran/student/student_list.html:43
+#: Quran/models.py:130
+msgid "Level"
+msgstr "مستوى"
+
+#: Quran/models.py:131 Quran/templates/Quran/invoice/invoice.html:61
+#: Quran/templates/Quran/reports/summary_report.html:72
+#: Quran/templates/Quran/student/student_list.html:44 Quran/views.py:947
 #: templates/includes/sidebar.html:46
 msgid "Group"
 msgstr "المجموعة"
 
-#: Quran/models.py:122
+#: Quran/models.py:133
+msgid "Parent's profession"
+msgstr "مهنة الوالد"
+
+#: Quran/models.py:134
 msgid "Discount Type"
 msgstr "نوع الخصم"
 
-#: Quran/models.py:144 Quran/models.py:193 Quran/models.py:205
+#: Quran/models.py:156 Quran/models.py:205 Quran/models.py:217
+#: Quran/templates/Quran/attendance/monthly_attendance.html:74
 #: Quran/templates/Quran/invoice/print_invoice.html:22
 #: templates/includes/sidebar.html:20
 msgid "Student"
 msgstr "الطالب"
 
-#: Quran/models.py:145 Quran/models.py:194
+#: Quran/models.py:157 Quran/models.py:206
 #: Quran/templates/Quran/invoice/print_invoice.html:21
-#: Quran/templates/Quran/student_payment_status/student_payment_status_list.html:59
+#: Quran/templates/Quran/student_payment_status/student_payment_status_list.html:60
+#: Quran/views.py:736
 msgid "Date"
 msgstr "التاريخ"
 
-#: Quran/models.py:146 Quran/models.py:207
+#: Quran/models.py:158 Quran/models.py:219
+#: Quran/templates/Quran/attendance/monthly_attendance.html:34
 #: Quran/templates/Quran/reports/summary_report.html:32
-#: Quran/templates/Quran/student_payment_status/student_payment_status_list.html:62
+#: Quran/templates/Quran/student_payment_status/student_payment_status_list.html:63
+#: Quran/views.py:736
 msgid "Month"
 msgstr "الشهر"
 
-#: Quran/models.py:147 Quran/models.py:208
+#: Quran/models.py:159 Quran/models.py:220
+#: Quran/templates/Quran/attendance/monthly_attendance.html:44
 #: Quran/templates/Quran/reports/summary_report.html:42
-#: Quran/templates/Quran/student_payment_status/student_payment_status_list.html:63
+#: Quran/templates/Quran/student_payment_status/student_payment_status_list.html:64
+#: Quran/views.py:736
 msgid "Year"
 msgstr "السنة"
 
-#: Quran/models.py:148 Quran/templates/Quran/reports/summary_report.html:81
+#: Quran/models.py:160 Quran/templates/Quran/reports/summary_report.html:82
+#: Quran/views.py:949
 msgid "Total Amount"
 msgstr "المبلغ الإجمالي"
 
-#: Quran/models.py:175
+#: Quran/models.py:187
 msgid "Student is not assigned to any group."
 msgstr "الطالب غير مسجل في أي مجموعة."
 
-#: Quran/models.py:180
+#: Quran/models.py:192
 #, python-brace-format
 msgid "Amount must equal course price: {expected}."
 msgstr "يجب أن يساوي المبلغ سعر الدورة: {expected}."
 
-#: Quran/models.py:188
+#: Quran/models.py:200 Quran/views.py:553
 msgid "An invoice already exists for this student for this month."
 msgstr "توجد فاتورة لهذا الطالب في هذا الشهر بالفعل."
 
-#: Quran/models.py:195 Quran/templates/Quran/attendance/attendance.html:69
+#: Quran/models.py:207 Quran/templates/Quran/attendance/attendance.html:68
+#: Quran/templates/Quran/attendance/monthly_attendance.html:78
+#: Quran/templates/Quran/attendance/monthly_attendance_pdf.html:46
 msgid "Present"
 msgstr "حاضر"
 
-#: Quran/models.py:206 Quran/templates/Quran/invoice/print_invoice.html:5
+#: Quran/models.py:218 Quran/templates/Quran/invoice/print_invoice.html:5
 #: Quran/templates/Quran/invoice/print_invoice.html:11
-#: templates/includes/sidebar.html:62
+#: templates/includes/sidebar.html:70
 msgid "Invoice"
 msgstr "فاتورة"
 
-#: Quran/models.py:209
-#: Quran/templates/Quran/student_payment_status/student_payment_status_list.html:28
-#: Quran/templates/Quran/student_payment_status/student_payment_status_list.html:40
+#: Quran/models.py:221
 msgid "Paid"
 msgstr "مدفوع"
 
-#: Quran/models.py:217
+#: Quran/models.py:229
 msgid "Discount Name"
 msgstr "اسم الخصم"
 
-#: Quran/models.py:218
+#: Quran/models.py:230
 msgid "Discount Amount"
 msgstr "قيمة الخصم"
 
-#: Quran/models.py:222
+#: Quran/models.py:234
 msgid "Discount Config"
 msgstr "إعدادات الخصم"
 
-#: Quran/models.py:223
+#: Quran/models.py:235
 msgid "Discount Configs"
 msgstr "إعدادات الخصومات"
 
@@ -337,11 +386,13 @@ msgid "Choose Group"
 msgstr "اختر المجموعة"
 
 #: Quran/templates/Quran/attendance/attendance.html:33
-#: Quran/templates/Quran/invoice/invoice.html:78
-#: Quran/templates/Quran/invoice/invoice.html:84
+#: Quran/templates/Quran/attendance/monthly_attendance.html:22
+#: Quran/templates/Quran/invoice/invoice.html:77
+#: Quran/templates/Quran/invoice/invoice.html:83
 #: Quran/templates/Quran/reports/summary_report.html:21
 #: Quran/templates/Quran/student/student_list.html:17
 #: Quran/templates/Quran/student/student_list.html:24
+#: Quran/templates/Quran/student_payment_status/student_payment_status_list.html:19
 msgid "--------"
 msgstr "--------"
 
@@ -353,25 +404,66 @@ msgstr "تنفيذ"
 msgid "Attendance of students"
 msgstr "حضور الطلاب"
 
-#: Quran/templates/Quran/attendance/attendance.html:66
-#: Quran/templates/Quran/invoice/invoice.html:54
+#: Quran/templates/Quran/attendance/attendance.html:64
+#: Quran/templates/Quran/attendance/monthly_attendance.html:73
+#: Quran/templates/Quran/class_group/class_group_list.html:21
+#: Quran/templates/Quran/course/course_list.html:21
+#: Quran/templates/Quran/reports/summary_report.html:70
+#: Quran/templates/Quran/student/student_list.html:39
+#: Quran/templates/Quran/student_payment_status/student_payment_status_list.html:59
+#: Quran/templates/Quran/teacher/teacher_list.html:21
+msgid "#"
+msgstr "م"
+
+#: Quran/templates/Quran/attendance/attendance.html:65
+#: Quran/templates/Quran/invoice/invoice.html:53
 msgid "Code ID"
 msgstr "معرف الرمز"
 
-#: Quran/templates/Quran/attendance/attendance.html:68
-#: Quran/templates/Quran/class_group/class_group_list.html:26
-#: Quran/templates/Quran/course/course_list.html:23
+#: Quran/templates/Quran/attendance/attendance.html:67
+#: Quran/templates/Quran/class_group/class_group_list.html:27
+#: Quran/templates/Quran/course/course_list.html:24
+#: Quran/templates/Quran/invoice/invoice.html:92
 msgid "Status"
 msgstr "الحالة"
 
 #: Quran/templates/Quran/attendance/attendance.html:102
 #: Quran/templates/Quran/class_group/class_group_form.html:23
 #: Quran/templates/Quran/course/course_form.html:23
-#: Quran/templates/Quran/invoice/invoice.html:98
+#: Quran/templates/Quran/invoice/invoice.html:113
 #: Quran/templates/Quran/student/student_form.html:23
 #: Quran/templates/Quran/teacher/teacher_form.html:23
 msgid "Save"
 msgstr "حفظ"
+
+#: Quran/templates/Quran/attendance/monthly_attendance.html:4
+#: Quran/templates/Quran/attendance/monthly_attendance.html:10
+#: templates/includes/sidebar.html:62
+msgid "Monthly Attendance"
+msgstr "الحضور الشهري"
+
+#: Quran/templates/Quran/attendance/monthly_attendance.html:56
+#: Quran/templates/Quran/reports/summary_report.html:54
+#: Quran/templates/Quran/student_payment_status/student_payment_status_list.html:43
+msgid "Filter Report"
+msgstr "تصفية التقرير"
+
+#: Quran/templates/Quran/attendance/monthly_attendance.html:61
+msgid "PDF"
+msgstr "PDF"
+
+#: Quran/templates/Quran/attendance/monthly_attendance_pdf.html:8
+#: Quran/templates/Quran/attendance/monthly_attendance_pdf.html:31
+msgid "Monthly Attendance Report"
+msgstr "تقرير الحضور الشهري"
+
+#: Quran/templates/Quran/attendance/monthly_attendance_pdf.html:41
+#: Quran/templates/Quran/class_group/class_group_list.html:22
+#: Quran/templates/Quran/course/course_list.html:22
+#: Quran/templates/Quran/student/student_list.html:41
+#: Quran/templates/Quran/teacher/teacher_list.html:22
+msgid "Name"
+msgstr "الاسم"
 
 #: Quran/templates/Quran/class_group/class_group_confirm_delete.html:4
 #: Quran/templates/Quran/class_group/class_group_confirm_delete.html:8
@@ -422,9 +514,8 @@ msgstr "ابحث بالاسم أو الرمز"
 
 #: Quran/templates/Quran/class_group/class_group_list.html:13
 #: Quran/templates/Quran/course/course_list.html:13
-#: Quran/templates/Quran/invoice/invoice.html:29
+#: Quran/templates/Quran/invoice/invoice.html:28
 #: Quran/templates/Quran/student/student_list.html:31
-#: Quran/templates/Quran/student_payment_status/student_payment_status_list.html:16
 #: Quran/templates/Quran/teacher/teacher_list.html:13
 msgid "Search"
 msgstr "بحث"
@@ -433,45 +524,76 @@ msgstr "بحث"
 msgid "Add Group"
 msgstr "إضافة مجموعة"
 
-#: Quran/templates/Quran/class_group/class_group_list.html:21
-#: Quran/templates/Quran/course/course_list.html:21
-#: Quran/templates/Quran/student/student_list.html:40
-#: Quran/templates/Quran/teacher/teacher_list.html:21
-msgid "Name"
-msgstr "الاسم"
-
-#: Quran/templates/Quran/class_group/class_group_list.html:24
+#: Quran/templates/Quran/class_group/class_group_list.html:25
+#: Quran/views.py:947
 msgid "Start"
 msgstr "البدء"
 
-#: Quran/templates/Quran/class_group/class_group_list.html:25
+#: Quran/templates/Quran/class_group/class_group_list.html:26
+#: Quran/views.py:947
 msgid "End"
 msgstr "النهاية"
 
-#: Quran/templates/Quran/class_group/class_group_list.html:27
-#: Quran/templates/Quran/course/course_list.html:24
-#: Quran/templates/Quran/student/student_list.html:44
-#: Quran/templates/Quran/teacher/teacher_list.html:25
+#: Quran/templates/Quran/class_group/class_group_list.html:28
+#: Quran/templates/Quran/course/course_list.html:25
+#: Quran/templates/Quran/student/student_list.html:45
+#: Quran/templates/Quran/teacher/teacher_list.html:26
 msgid "Actions"
 msgstr "الإجراءات"
 
-#: Quran/templates/Quran/class_group/class_group_list.html:46
-#: Quran/templates/Quran/course/course_list.html:40
-#: Quran/templates/Quran/student/student_list.html:56
-#: Quran/templates/Quran/teacher/teacher_list.html:36
+#: Quran/templates/Quran/class_group/class_group_list.html:48
+#: Quran/templates/Quran/course/course_list.html:42
+#: Quran/templates/Quran/student/student_list.html:58
+#: Quran/templates/Quran/teacher/teacher_list.html:38
 msgid "Edit"
 msgstr "تعديل"
 
-#: Quran/templates/Quran/class_group/class_group_list.html:47
-#: Quran/templates/Quran/course/course_list.html:41
-#: Quran/templates/Quran/student/student_list.html:57
-#: Quran/templates/Quran/teacher/teacher_list.html:37
+#: Quran/templates/Quran/class_group/class_group_list.html:49
+#: Quran/templates/Quran/course/course_list.html:43
+#: Quran/templates/Quran/student/student_list.html:59
+#: Quran/templates/Quran/teacher/teacher_list.html:39
 msgid "Delete"
 msgstr "حذف"
 
-#: Quran/templates/Quran/class_group/class_group_list.html:52
+#: Quran/templates/Quran/class_group/class_group_list.html:54
 msgid "No groups found."
 msgstr "لم يتم العثور على مجموعات."
+
+#: Quran/templates/Quran/class_group/class_group_list.html:66
+#: Quran/templates/Quran/course/course_list.html:60
+#: Quran/templates/Quran/student/student_list.html:76
+#: Quran/templates/Quran/teacher/teacher_list.html:56
+msgid "Previous"
+msgstr "السابق"
+
+#: Quran/templates/Quran/class_group/class_group_list.html:67
+#: Quran/templates/Quran/class_group/class_group_list.html:72
+#: Quran/templates/Quran/course/course_list.html:61
+#: Quran/templates/Quran/course/course_list.html:66
+#: Quran/templates/Quran/student/student_list.html:77
+#: Quran/templates/Quran/student/student_list.html:82
+#: Quran/templates/Quran/teacher/teacher_list.html:57
+#: Quran/templates/Quran/teacher/teacher_list.html:62
+msgid "«"
+msgstr "»"
+
+#: Quran/templates/Quran/class_group/class_group_list.html:86
+#: Quran/templates/Quran/course/course_list.html:80
+#: Quran/templates/Quran/student/student_list.html:96
+#: Quran/templates/Quran/teacher/teacher_list.html:76
+msgid "Next"
+msgstr "التالي"
+
+#: Quran/templates/Quran/class_group/class_group_list.html:87
+#: Quran/templates/Quran/class_group/class_group_list.html:92
+#: Quran/templates/Quran/course/course_list.html:81
+#: Quran/templates/Quran/course/course_list.html:86
+#: Quran/templates/Quran/student/student_list.html:97
+#: Quran/templates/Quran/student/student_list.html:102
+#: Quran/templates/Quran/teacher/teacher_list.html:77
+#: Quran/templates/Quran/teacher/teacher_list.html:82
+msgid "»"
+msgstr ""
 
 #: Quran/templates/Quran/course/course_confirm_delete.html:4
 #: Quran/templates/Quran/course/course_confirm_delete.html:8
@@ -492,7 +614,7 @@ msgstr "الدورات"
 msgid "Add Course"
 msgstr "إضافة دورة"
 
-#: Quran/templates/Quran/course/course_list.html:46
+#: Quran/templates/Quran/course/course_list.html:48
 msgid "No courses found."
 msgstr "لم يتم العثور على دورات."
 
@@ -539,21 +661,28 @@ msgstr "إنشاء وطباعة الفواتير."
 msgid "Go to Invoices"
 msgstr "اذهب إلى الفواتير"
 
-#: Quran/templates/Quran/invoice/invoice.html:17
+#: Quran/templates/Quran/invoice/invoice.html:16
 msgid "Enter Code"
 msgstr "أدخل الرمز"
 
-#: Quran/templates/Quran/invoice/invoice.html:23
+#: Quran/templates/Quran/invoice/invoice.html:22
 msgid "Enter Name"
 msgstr "أدخل الاسم"
 
-#: Quran/templates/Quran/invoice/invoice.html:49
+#: Quran/templates/Quran/invoice/invoice.html:48
 msgid "Student Invoice"
 msgstr "فاتورة الطالب"
 
-#: Quran/templates/Quran/invoice/invoice.html:74
+#: Quran/templates/Quran/invoice/invoice.html:73
 msgid "For"
 msgstr "لـ"
+
+#: Quran/templates/Quran/invoice/print_invoice.html:13
+#: templates/admin/login.html:19 templates/includes/sidebar.html:94
+#, fuzzy
+#| msgid "Quran App"
+msgid "Quran App Logo"
+msgstr "تطبيق القرآن"
 
 #: Quran/templates/Quran/invoice/print_invoice.html:15
 msgid "Print"
@@ -563,71 +692,73 @@ msgstr "طباعة"
 msgid "Invoice ID"
 msgstr "رقم الفاتورة"
 
-#: Quran/templates/Quran/invoice/print_invoice.html:23
+#: Quran/templates/Quran/invoice/print_invoice.html:24
 msgid "Subscription For"
 msgstr "اشتراك لـ"
 
-#: Quran/templates/Quran/invoice/print_invoice.html:24
-#: Quran/templates/Quran/student_payment_status/student_payment_status_list.html:64
+#: Quran/templates/Quran/invoice/print_invoice.html:25
+#: Quran/templates/Quran/student_payment_status/student_payment_status_list.html:65
+#: Quran/views.py:736
 msgid "Amount"
 msgstr "المبلغ"
 
 #: Quran/templates/Quran/invoice/print_invoice.html:28
+#, fuzzy
+#| msgid "Month"
+msgid "Months Late"
+msgstr "الشهر"
+
+#: Quran/templates/Quran/invoice/print_invoice.html:37
 msgid "Thank you!"
 msgstr "شكرًا لك!"
 
-#: Quran/templates/Quran/invoice/print_invoice.html:32
+#: Quran/templates/Quran/invoice/print_invoice.html:41
 msgid "Add New Invoice"
 msgstr "إضافة فاتورة جديدة"
 
-#: Quran/templates/Quran/reports/summary_report.html:10
-#: templates/includes/sidebar.html:79
+#: Quran/templates/Quran/reports/summary_report.html:10 Quran/views.py:945
+#: templates/includes/sidebar.html:87
 msgid "Summary Report"
 msgstr "تقرير الملخص"
-
-#: Quran/templates/Quran/reports/summary_report.html:54
-#: Quran/templates/Quran/student_payment_status/student_payment_status_list.html:43
-msgid "Filter Report"
-msgstr "تصفية التقرير"
 
 #: Quran/templates/Quran/reports/summary_report.html:59
 #: Quran/templates/Quran/student_payment_status/student_payment_status_list.html:48
 msgid "Excel"
 msgstr "إكسل"
 
-#: Quran/templates/Quran/reports/summary_report.html:74
+#: Quran/templates/Quran/reports/summary_report.html:75 Quran/views.py:947
 msgid "Total Students"
 msgstr "إجمالي الطلاب"
 
-#: Quran/templates/Quran/reports/summary_report.html:75
+#: Quran/templates/Quran/reports/summary_report.html:76
 msgid "Paid (Current Month)"
 msgstr "مدفوع (الشهر الحالي)"
 
-#: Quran/templates/Quran/reports/summary_report.html:76
+#: Quran/templates/Quran/reports/summary_report.html:77
 msgid "Discount (Current Month)"
 msgstr "خصم (الشهر الحالي)"
 
-#: Quran/templates/Quran/reports/summary_report.html:77
+#: Quran/templates/Quran/reports/summary_report.html:78 Quran/views.py:948
 msgid "Full Discount"
 msgstr "خصم كامل"
 
-#: Quran/templates/Quran/reports/summary_report.html:78
-#: Quran/templates/Quran/student_payment_status/student_payment_status_list.html:42
+#: Quran/templates/Quran/reports/summary_report.html:79 Quran/views.py:948
 msgid "Not Paid"
 msgstr "غير مدفوع"
 
-#: Quran/templates/Quran/reports/summary_report.html:79
+#: Quran/templates/Quran/reports/summary_report.html:80
 msgid "Paid (Previous Months)"
 msgstr "مدفوع (الأشهر السابقة)"
 
-#: Quran/templates/Quran/reports/summary_report.html:80
+#: Quran/templates/Quran/reports/summary_report.html:81
 msgid "Discount (Previous Months)"
 msgstr "خصم (الأشهر السابقة)"
 
-#: Quran/templates/Quran/reports/summary_report.html:105
-#: Quran/templates/Quran/student_payment_status/student_payment_status_list.html:81
+#: Quran/templates/Quran/reports/summary_report.html:107
+#: Quran/templates/Quran/student_payment_status/student_payment_status_list.html:83
+#: Quran/views.py:790 Quran/views.py:1006
 msgid "Totals"
-msgstr "المجاميع"
+msgstr "الاجمالي"
 
 #: Quran/templates/Quran/student/student_confirm_delete.html:4
 #: Quran/templates/Quran/student/student_confirm_delete.html:8
@@ -656,32 +787,25 @@ msgstr "تصفية حسب المجموعة"
 msgid "Add Student"
 msgstr "إضافة طالب"
 
-#: Quran/templates/Quran/student/student_list.html:41
-#: Quran/templates/Quran/teacher/teacher_list.html:23
+#: Quran/templates/Quran/student/student_list.html:42
+#: Quran/templates/Quran/teacher/teacher_list.html:24
 msgid "Phone"
 msgstr "الهاتف"
 
-#: Quran/templates/Quran/student/student_list.html:62
+#: Quran/templates/Quran/student/student_list.html:64
 msgid "No students found."
 msgstr "لم يتم العثور على طلاب."
 
 #: Quran/templates/Quran/student_payment_status/student_payment_status_list.html:4
 #: Quran/templates/Quran/student_payment_status/student_payment_status_list.html:8
-#: templates/includes/sidebar.html:70
+#: Quran/views.py:734 templates/includes/sidebar.html:78
 msgid "Payment Status"
 msgstr "حالة الدفع"
 
-#: Quran/templates/Quran/student_payment_status/student_payment_status_list.html:14
-msgid "Search by student"
-msgstr "ابحث عن طالب"
-
-#: Quran/templates/Quran/student_payment_status/student_payment_status_list.html:60
+#: Quran/templates/Quran/student_payment_status/student_payment_status_list.html:61
+#: Quran/views.py:736
 msgid "Student Code"
 msgstr "رمز الطالب"
-
-#: Quran/templates/Quran/student_payment_status/student_payment_status_list.html:48
-msgid "No payment records found."
-msgstr "لم يتم العثور على سجلات دفع."
 
 #: Quran/templates/Quran/teacher/teacher_confirm_delete.html:4
 #: Quran/templates/Quran/teacher/teacher_confirm_delete.html:8
@@ -702,9 +826,61 @@ msgstr "المعلمين"
 msgid "Add Teacher"
 msgstr "إضافة معلم"
 
-#: Quran/templates/Quran/teacher/teacher_list.html:42
+#: Quran/templates/Quran/teacher/teacher_list.html:44
 msgid "No teachers found."
 msgstr "لم يتم العثور على معلمين."
+
+#: Quran/views.py:567
+msgid "Invoice was not saved."
+msgstr "لم يتم حفظ الفاتورة."
+
+#: Quran/views.py:593
+#, fuzzy
+#| msgid "No students found."
+msgid "Student not found."
+msgstr "لم يتم العثور على طلاب."
+
+#: Quran/views.py:595
+#, fuzzy
+#| msgid "Students"
+msgid "Student is exempt."
+msgstr "الطلاب"
+
+#: Quran/views.py:816
+#, fuzzy
+#| msgid "Payment Status"
+msgid "payment_status.xlsx"
+msgstr "حالة الدفع"
+
+#: Quran/views.py:948
+#, fuzzy
+#| msgid "Paid (Current Month)"
+msgid "Paid Current"
+msgstr "مدفوع (الشهر الحالي)"
+
+#: Quran/views.py:948
+#, fuzzy
+#| msgid "Discount (Current Month)"
+msgid "Discount Current"
+msgstr "خصم (الشهر الحالي)"
+
+#: Quran/views.py:949
+#, fuzzy
+#| msgid "Paid (Previous Months)"
+msgid "Paid Previous"
+msgstr "مدفوع (الأشهر السابقة)"
+
+#: Quran/views.py:949
+#, fuzzy
+#| msgid "Discount (Previous Months)"
+msgid "Discount Previous"
+msgstr "خصم (الأشهر السابقة)"
+
+#: Quran/views.py:1039
+#, fuzzy
+#| msgid "Summary Report"
+msgid "summary_report.xlsx"
+msgstr "تقرير الملخص"
 
 #: templates/admin/login.html:8 templates/admin/login.html:60
 msgid "Login"
@@ -734,18 +910,21 @@ msgstr "كلمة المرور"
 msgid "Quran Dashboard"
 msgstr "لوحة تحكم القرآن"
 
-#: templates/includes/sidebar.html:104
+#: templates/includes/sidebar.html:112
 msgid "Sign out"
 msgstr "تسجيل الخروج"
+
+#~ msgid "Search by student"
+#~ msgstr "ابحث عن طالب"
+
+#~ msgid "No payment records found."
+#~ msgstr "لم يتم العثور على سجلات دفع."
 
 #~ msgid "Select Month"
 #~ msgstr "اختر الشهر"
 
 #~ msgid "Select Year"
 #~ msgstr "اختر السنة"
-
-#~ msgid "Quran App"
-#~ msgstr "تطبيق القرآن"
 
 #~ msgid "Language"
 #~ msgstr "اللغة"

@@ -2,8 +2,9 @@ import calendar
 from datetime import date, datetime
 from django.db.models import Count, Q, F, Value, IntegerField, DecimalField, ExpressionWrapper, Case, When
 from decimal import Decimal
+from collections import defaultdict
 from Quran.models import (
-    School, Attendance, StudentPaymentStatus, Invoice, ClassGroup, DiscountConfig
+    School, Student, Attendance, StudentPaymentStatus, Invoice, ClassGroup, DiscountConfig
 )
 
 
@@ -47,6 +48,65 @@ def get_missing_months_for_student(student):
     return missing_months
 
 
+def get_attendance_summary(school_id, month, year):
+    # Get date range
+    date_from = date(year, month, 1)
+    last_day = calendar.monthrange(year, month)[1]
+    date_to = date(year, month, last_day)
+    days_list = list(range(1, last_day + 1))
+
+    # Get all students for this school
+    students = Student.objects.filter(school_id=school_id)
+
+    if not students.exists():
+        return {
+            'students': [],
+            'days': days_list,
+            'stats': {'total_students': 0, 'avg_attendance': 0}
+        }
+    
+    # Get attendance data
+    attendance_data = Attendance.objects.filter(
+        student__in=students,
+        date__range=(date_from, date_to)
+    ).values(
+        'student_id',
+        'date',
+        'present'
+    ).order_by('student_id', 'date')
+ 
+    # Convert to nested dictionary: {student_id: {day: present}}
+    attendance_dict = defaultdict(dict)
+
+    for record in attendance_data:
+        student_id = record['student_id']
+        day = record['date'].day
+        attendance_dict[student_id][day] = record['present']
+    
+    # Build student list with attendance
+    student_list = []    
+    for student in students:
+        attendance_list = []
+        
+        # Fill attendance for each day
+        for day in days_list:
+            is_present = attendance_dict.get(student.id, {}).get(day, False)
+            attendance_list.append(is_present)
+
+        student_list.append({
+            'id': student.id,
+            'name': student.name,
+            'attendance': attendance_list,
+            'total_present': sum(attendance_list),
+        })
+    
+    data = {
+        'students': student_list,
+        'days': days_list,
+    }
+    return data
+
+
 def get_group_summary(school_id, month, year):
     # Get start day of month
     date_from = date(year, month, 1)
@@ -56,7 +116,7 @@ def get_group_summary(school_id, month, year):
     date_to = date(year, month, last_day)
 
     # Filter invoices by date range
-    invoice_qs = Invoice.objects.filter(date__range=(date_from, date_to))
+    invoice_qs = Invoice.objects.filter(school_id=school_id, date__range=(date_from, date_to))
 
     # Get the discount value for the school, default to 0 if not set
     discount_value = DiscountConfig.objects.filter(school_id=school_id).first()
@@ -191,9 +251,9 @@ def get_payment_summary(school_id, from_date, to_date):
     }
 
     if from_date:
-        filters['from_date'] = from_date
+        filters['invoice__date__lte'] = from_date
     if to_date:
-        filters['to_date'] = to_date
+        filters['invoice__date__gte'] = to_date
 
     data = (
         StudentPaymentStatus.objects.filter(**filters)

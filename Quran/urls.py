@@ -5,8 +5,8 @@ from Quran.views import (
     TeacherListView, TeacherCreateView, TeacherUpdateView, TeacherDeleteView,
     CourseListView, CourseCreateView, CourseUpdateView, CourseDeleteView,
     ClassGroupListView, ClassGroupCreateView, ClassGroupUpdateView, ClassGroupDeleteView,
-    AttendanceView,
-    InvoiceCreateView, print_invoice,
+    AttendanceView, MonthlyAttendanceView,
+    InvoiceCreateView, InvoicePrintView,
     PaymentStatusListView,
     SummaryReportView,
 )
@@ -40,10 +40,11 @@ urlpatterns = [
 
     # Attendance
     path('attendance/', AttendanceView.as_view(), name='attendance'),
+    path('monthly_attendance/', MonthlyAttendanceView.as_view(), name='monthly_attendance'),
 
     # Invoice
     path('invoice/', InvoiceCreateView.as_view(), name='invoice'),
-    path('invoice/print/<int:invoice_id>/', print_invoice, name='print_invoice'),
+    path('invoice/print/<int:invoice_id>/', InvoicePrintView.as_view(), name='print_invoice'),
 
     # Payment Status
     path('payment_status/', PaymentStatusListView.as_view(), name='payment_status'),

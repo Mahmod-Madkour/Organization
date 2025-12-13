@@ -1,4 +1,5 @@
-from datetime import date, timezone
+import calendar
+from datetime import date
 from django.utils import translation
 from django.http import HttpResponse
 from django.urls import reverse, reverse_lazy
@@ -9,7 +10,7 @@ from django.utils.translation import gettext as _
 from django.utils.decorators import method_decorator
 from django.db.models import Q
 from django.views.generic import (
-    ListView, CreateView, UpdateView, DeleteView, TemplateView, FormView
+    ListView, CreateView, UpdateView, DeleteView, TemplateView, DetailView
 )
 from Quran.models import (
     School, Student, Teacher, Course, ClassGroup, Attendance, Invoice, StudentPaymentStatus
@@ -18,7 +19,7 @@ from Quran.forms import (
     StudentForm, TeacherForm, CourseForm, ClassGroupForm
 )
 from Quran.utils import (
-    get_user_school, get_present_for_student, get_missing_months_for_student, get_group_summary, get_payment_summary,
+    get_user_school, get_present_for_student, get_attendance_summary, get_missing_months_for_student, get_group_summary, get_payment_summary,
 )
 from Quran.services import (
     handle_academic_year
@@ -33,11 +34,20 @@ from django.contrib.staticfiles import finders
 from openpyxl.styles import Alignment, Font, PatternFill
 from django.conf import settings
 
+# Pdf Importing
+from weasyprint import HTML
+from django.template.loader import render_to_string
+
 
 # --------------------- Home ---------------------
 @method_decorator(staff_member_required, name='dispatch')
 class HomeView(TemplateView):
     template_name = 'Quran/home.html'
+
+    # Everytime will check date to upgrade academic year
+    today = date.today()
+    if today.month == 9 and today.day == 1:
+        handle_academic_year()
 
 
 # --------------------- Base Class ---------------------
@@ -288,7 +298,6 @@ class ClassGroupDeleteView(DeleteView):
     success_url = reverse_lazy('class_group_list')
 
 
-
 # --------------------- Attendance ---------------------
 @method_decorator(staff_member_required, name='dispatch')
 class AttendanceView(TemplateView):
@@ -297,34 +306,36 @@ class AttendanceView(TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         today = date.today()
-        selected_date = self.request.GET.get('selected_date') or self.request.POST.get('selected_date')
-        selected_group = self.request.GET.get('selected_group') or self.request.POST.get('selected_group')
 
         # Pass group options 
         user_school = get_user_school(self.request)
         groups = ClassGroup.objects.filter(school__in=user_school)
 
         context.update({
-            'groups': groups,
             'today': today,
-            'selected_date': selected_date,
-            'selected_group': selected_group,
-            'group_students': [],
+            'groups': groups
         })
 
-        if selected_date and selected_group:
-            students = Student.objects.filter(is_active=True, school__in=user_school, group=selected_group)
-            for student in students:
-                missing = get_missing_months_for_student(student)
-                present = get_present_for_student(student.id, selected_date)
-                context['group_students'].append({
-                    "student_id": student.id,
-                    "student_code": student.code,
-                    "student_name": student.name,
-                    "status": missing,
-                    "present": present,
-                })
+        # Add post-processing context if available
+        if hasattr(self, "post_context"):
+            context.update(self.post_context)
+
         return context
+
+    def get(self, request, *args, **kwargs):
+        selected_date = self.request.GET.get('selected_date')
+        selected_group = self.request.GET.get('selected_group')
+
+        # Fetch group students
+        group_students = self.get_group_students(self.request, selected_date, selected_group)
+
+        self.post_context = {
+            'selected_date': selected_date,
+            'selected_group': selected_group,
+            'group_students': group_students,
+        }
+
+        return super().get(request, *args, **kwargs)
 
     def post(self, request, *args, **kwargs):
         selected_date = request.POST.get('selected_date')
@@ -332,9 +343,10 @@ class AttendanceView(TemplateView):
         student_ids = request.POST.getlist('student_ids')
         present_student_ids = request.POST.getlist('present')
 
+        # Update attendance records for the selected date and group
         for student_id in student_ids:
             present = str(student_id) in present_student_ids
-            student = Student.objects.get(id=student_id)
+            student = get_object_or_404(Student, id=int(student_id))
 
             Attendance.objects.update_or_create(
                 school=student.school,
@@ -343,12 +355,152 @@ class AttendanceView(TemplateView):
                 defaults={'present': present}
             )
 
-        # After saving, just render the updated context
-        context = self.get_context_data()
-        context['selected_date'] = selected_date
-        context['selected_group'] = selected_group
+        # Fetch group students
+        group_students = self.get_group_students(self.request, selected_date, selected_group)
 
-        return self.render_to_response(context)
+        self.post_context = {
+            'selected_date': selected_date,
+            'selected_group': selected_group,
+            'group_students': group_students,
+        }
+
+        return super().get(request, *args, **kwargs)
+
+    def get_group_students(self, request, date, group):
+        user_school = get_user_school(request)
+
+        group_students = []
+        if date and group:
+            students = Student.objects.filter(is_active=True, school__in=user_school, group=int(group))
+            for student in students:
+                missing = get_missing_months_for_student(student)
+                present = get_present_for_student(student.id, date)
+                group_students.append({
+                    "student_id": student.id,
+                    "student_code": student.code,
+                    "student_name": student.name,
+                    "status": missing,
+                    "present": present,
+                })
+
+        return group_students
+
+
+@method_decorator(staff_member_required, name='dispatch')
+class MonthlyAttendanceView(TemplateView):
+    template_name = 'Quran/attendance/monthly_attendance.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        today = date.today()
+        
+        context.update({
+            "schools": School.objects.all(),
+            "selected_month": int(today.month),
+            "selected_year": int(today.year),
+            "months": range(1, 13),
+            "years": range(today.year, today.year + 10),
+        })
+        
+        # Add post-processing context if available
+        if hasattr(self, "post_context"):
+            context.update(self.post_context)
+        
+        return context
+
+    def get(self, request, *args, **kwargs):
+        # Get filter parameters
+        school_id = request.GET.get('school')
+        month = request.GET.get('month')
+        year = request.GET.get('year')
+        
+        # Process and get attendance data
+        attendance_data = self.get_attendance_data(school_id, month, year)
+        
+        # Store in post_context for template
+        self.post_context = attendance_data
+        
+        return super().get(request, *args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        # Read action: filter or pdf
+        action = request.POST.get("action")
+        
+        # Get filter parameters
+        school_id = request.POST.get('school')
+        month = request.POST.get('month')
+        year = request.POST.get('year')
+        
+        # Process and get attendance data
+        attendance_data = self.get_attendance_data(school_id, month, year)
+        
+        # Export to PDF if requested
+        if action == "pdf":
+            return self.export_pdf(request, attendance_data)
+        
+        # Store in post_context for template rendering
+        self.post_context = attendance_data
+        
+        # Otherwise, render the filtered report page
+        return super().get(request, *args, **kwargs)
+
+    def get_attendance_data(self, school_id=None, month=None, year=None):
+        """Process and return attendance data based on filters."""
+        today = date.today()
+        data = None
+        days = []
+
+        # Get school
+        if not self.request.user.is_superuser and not school_id:
+            school_id = get_user_school(self.request).first().id
+
+        # Convert values
+        school_id = int(school_id) if school_id else None
+        month = int(month) if month else today.month
+        year = int(year) if year else today.year
+
+        # Get attendance data if a school is selected
+        if school_id:
+            data = get_attendance_summary(
+                school_id=school_id,
+                month=month,
+                year=year
+            )
+            
+            # Calculate days in month for calendar display
+            last_day = calendar.monthrange(year, month)[1]
+            days = range(1, last_day + 1)
+        
+        context = {
+            "selected_school": school_id,
+            "selected_month": month,
+            "selected_year": year,
+            "days": days,
+            "data": data,
+        }
+
+        return context
+
+    def export_pdf(self, request, attendance_data):
+        """Export attendance data to PDF."""
+        
+        # Render HTML template with data
+        html_string = render_to_string('Quran/attendance/monthly_attendance_pdf.html', attendance_data)
+        
+        # Create PDF from HTML
+        html = HTML(string=html_string, base_url=request.build_absolute_uri('/'))
+        
+        # Generate PDF
+        pdf_file = html.write_pdf()
+        
+        # Create HTTP response with PDF
+        response = HttpResponse(pdf_file, content_type='application/pdf')
+        
+        # Set filename
+        filename = f"attendance_report_{attendance_data['selected_month']}_{attendance_data['selected_year']}.pdf"
+        response['Content-Disposition'] = f'attachment; filename="{filename}"'
+        
+        return response
 
 
 # --------------------- Invoices ---------------------
@@ -356,13 +508,95 @@ class AttendanceView(TemplateView):
 class InvoiceCreateView(TemplateView):
     template_name = 'Quran/invoice/invoice.html'
 
-    def get_student(self, code=None, name=None):
-        """Return the student object based on code or name."""
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        today = date.today()
+        current_month = today.month
+        current_year = today.year
+        
+        context.update({
+            "months": range(1, 13),
+            "years": range(current_year, current_year + 10),
+            "current_month": current_month,
+            "current_year": current_year,
+        })
+        
+        # Add post-processing context if available
+        if hasattr(self, "post_context"):
+            context.update(self.post_context)
+            
+        return context
+
+    def get(self, request, *args, **kwargs):
+        selected_code = request.GET.get("selected_code", '')
+        selected_name = request.GET.get("selected_name", '')
+        
+        self.post_context = self.process_student_data(code=selected_code, name=selected_name)
+        
+        return super().get(request, *args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        code = request.POST.get('student_code')
+        year = request.POST.get('year')
+        month = request.POST.get('month')
+        
+        # First, get student data context
+        self.post_context = self.process_student_data(code=code)
+        
+        # If we have student data (no errors), try to create invoice
+        if self.post_context.get('student_data'):
+            student_id = self.post_context['student_data']['id']
+            student = get_object_or_404(Student, id=student_id)
+            
+            # Check for duplicate invoice
+            if Invoice.objects.filter(student=student, month=month, year=year).exists():
+                self.post_context["error_msg"] = _(f"An invoice already exists for this student for this month.")
+
+            else:
+                # Create invoice
+                try:
+                    invoice = Invoice.objects.create(
+                        school=student.school,
+                        student=student,
+                        month=month,
+                        year=year,
+                        amount=Invoice.calculate_expected_amount(student),
+                    )
+                    return redirect("print_invoice", invoice_id=invoice.id)
+                except ValidationError as e:
+                    self.post_context["error_msg"] = _("Invoice was not saved.")
+        
+        return super().get(request, *args, **kwargs)
+
+    def process_student_data(self, code=None, name=None):
+        """Process and return context for a student. Handles validation and data building."""
+        context = {}
+        
         if code:
-            return Student.objects.filter(code=code).first()
+            context['selected_code'] = code
         if name:
-            return Student.objects.filter(name__icontains=name).first()
-        return None
+            context['selected_name'] = name
+            
+        # Only process if we have search criteria
+        if not (code or name):
+            return context
+            
+        # Get student
+        student = None
+        if code:
+            student = Student.objects.filter(code=code).first()
+        elif name:
+            student = Student.objects.filter(name__icontains=name).first()
+
+        # Get student data
+        if not student:
+            context["error_msg"] = _("Student not found.")
+        elif student.discount_type == 'full':
+            context["error_msg"] = _("Student is exempt.")
+        else:
+            context["student_data"] = self.build_student_context(student)
+            
+        return context
 
     def build_student_context(self, student):
         """Return context dictionary for a student."""
@@ -374,94 +608,38 @@ class InvoiceCreateView(TemplateView):
             "name": student.name,
             "group": student.group.name,
             "course": student.group.course.name,
-            "price": expected_price,
+            "price": int(expected_price),
             "status": missing,
         }
 
+
+@method_decorator(staff_member_required, name='dispatch')
+class InvoicePrintView(TemplateView):
+    template_name = 'Quran/invoice/print_invoice.html'
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        today = date.today()
-        current_month = today.month
-        current_year = today.year
+
+        invoice_id = self.kwargs.get("invoice_id")
+        invoice = get_object_or_404(Invoice, pk=invoice_id)
+
+        # Get missing months
+        missing = get_missing_months_for_student(invoice.student)
+
+        # Update context with all required data for template
         context.update({
-            "months": range(1, 13),
-            "years": range(current_year, current_year + 10),
-            "current_month": current_month,
-            "current_year": current_year,
+            "id": invoice.id,
+            "date": invoice.date,
+            "student": invoice.student.name,
+            "course": invoice.student.group.course.name,
+            "month": invoice.month,
+            "year": invoice.year,
+            "amount": int(invoice.amount),
+            "status": missing,
         })
+
+        context["invoice"] = invoice
         return context
-
-    def get(self, request, *args, **kwargs):
-        context = self.get_context_data(**kwargs)
-        selected_code = request.GET.get("selected_code", '')
-        selected_name = request.GET.get("selected_name", '')
-
-        context.update({
-            "selected_code": selected_code,
-            "selected_name": selected_name,
-        })
-
-        student = self.get_student(code=selected_code, name=selected_name)
-        if not student:
-            context["error_msg"] = _("Student not found.")
-            return render(request, self.template_name, context)
-
-        if student.discount_type == 'full':
-            context["error_msg"] = _("Student is exempt.")
-            return render(request, self.template_name, context)
-
-        context["student_data"] = self.build_student_context(student)
-        return render(request, self.template_name, context)
-
-    def post(self, request, *args, **kwargs):
-        context = self.get_context_data()
-        code = request.POST.get('student_code')
-        year = request.POST.get('year')
-        month = request.POST.get('month')
-
-        student = self.get_student(code=code)
-        if not student:
-            context["error_msg"] = _("Student not found.")
-            return render(request, self.template_name, context)
-
-        if student.discount_type == 'full':
-            context["error_msg"] = _("Student is exempt.")
-            return render(request, self.template_name, context)
-
-        context["student_data"] = self.build_student_context(student)
-
-        # Check duplicate invoice
-        if Invoice.objects.filter(student=student, month=month, year=year).exists():
-            context["error_msg"] = _(f"An invoice already exists for {month}-{year}.")
-            return self.render_to_response(context)
-
-        # Create invoice safely
-        invoice = Invoice(
-            school=student.school,
-            student=student,
-            month=month,
-            year=year,
-            amount=Invoice.calculate_expected_amount(student),
-        )
-        
-        try:
-            invoice.save()
-            return redirect("print_invoice", invoice_id=invoice.id)
-        except ValidationError as e:
-            context["error_msg"] = "; ".join(e.messages)
-            return self.render_to_response(context)
-
-
-@staff_member_required
-def print_invoice(request, invoice_id):
-    invoice = get_object_or_404(Invoice, id=invoice_id)
-    missing = get_missing_months_for_student(invoice.student)
-
-    context = {
-        'invoice': invoice,
-        'status': missing,
-    }
-    return render(request, 'Quran/invoice/print_invoice.html', context)
 
 
 # --------------------- Student Payment Status ---------------------
@@ -469,71 +647,69 @@ def print_invoice(request, invoice_id):
 class PaymentStatusListView(TemplateView):
     template_name = 'Quran/student_payment_status/student_payment_status_list.html'
 
-    # GET
-    def get(self, request, *args, **kwargs):
-        return super().get(request, *args, **kwargs)
-
-    # POST generate or exporting Excel
-    def post(self, request, *args, **kwargs):
-        # Read action: filter or excel
-        action = request.POST.get("action")
-
-        # Build context based on POST data
-        context = self.get_context_data(
-            school=request.POST.get("school"),
-            from_date=request.POST.get("from_date"),
-            to_date=request.POST.get("to_date"),
-        )
-
-        # Export to Excel if requested
-        if action == "excel" and context.get("data"):
-            return self.export_excel(context["data"])
-
-        # Otherwise, render the filtered report page
-        return self.render_to_response(context)
-
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         today = date.today()
 
-        # Read values from kwargs (POST) or GET parameters
-        school_id = kwargs.get("school") or self.request.GET.get("school")
-        from_date = kwargs.get("from_date") or self.request.GET.get("from_date")
-        to_date = kwargs.get("to_date") or self.request.GET.get("to_date")
-
-        # Convert values to integers
-        if school_id:
-            school_id = int(school_id)
-        else:
-            school_id = get_user_school(self.request).first()
-
-        # Get report data if a school is selected
-        data = None
-        if school_id:
-            data = get_payment_summary(
-                school_id=school_id,
-                from_date=from_date,
-                to_date=to_date,
-            )
-
-        # Calculate totals for numeric columns
-        totals = {}
-        if data:
-            totals = {
-                "total_amount": sum(d.get("amount", 0) for d in data),
-            }
-
-        # Update context with all required data for template
+        # Add schools and current date to context
         context.update({
+            "today": str(today),
+            "from_date": str(today),
+            "to_date": str(today),
             "schools": School.objects.all(),
+        })
+
+        # Add post-processing context if available
+        if hasattr(self, "post_context"):
+            context.update(self.post_context)
+
+        return context
+
+    # POST generate or exporting Excel
+    def post(self, request, *args, **kwargs):
+        # Extract and process the form values
+        action = request.POST.get("action")
+        school_id = self.request.POST.get("school")
+        from_date = self.request.POST.get("from_date")
+        to_date = self.request.POST.get("to_date")
+
+        # Fetch the data based on the selected filters
+        data, totals = self.get_payment_data(school_id, from_date, to_date)
+
+        # Store the filtered data and totals for use in the template
+        self.post_context = {
             "selected_school": school_id,
-            "today": today,
             "from_date": from_date,
             "to_date": to_date,
             "data": data,
             "totals": totals,
-        })
-        return context
+        }
+
+        # Export to Excel if requested
+        if action == "excel" and data:
+            return self.export_excel(data)
+
+        # Otherwise, render the filtered report page
+        return self.get(request, *args, **kwargs)
+
+    def get_payment_data(self, school_id=None, from_date=None, to_date=None):
+        data = None
+        totals = {}
+
+        # Convert values to integers
+        if not self.request.user.is_superuser and not school_id:
+            school_id = get_user_school(self.request).first()
+        school_id = int(school_id)
+
+        # Fetch the payment summary for the given filters
+        if school_id:
+            data = get_payment_summary(school_id=school_id, from_date=from_date, to_date=to_date)
+
+            # Calculate totals for numeric columns
+            if data:
+                totals = {"total_amount": sum(d.get("amount", 0) for d in data)}
+
+        return data, totals
 
     # Export Excel
     def export_excel(self, data):
@@ -555,9 +731,9 @@ class PaymentStatusListView(TemplateView):
             ]
             ws.sheet_view.rightToLeft = True
         else:
-            title_text = "Payment Status"
+            title_text = _("Payment Status")
             headers = [
-                "Date", "Student Code", "Student Name", "Month", "Year", "Amount",
+                _("Date"), _("Student Code"), _("Student Name"), _("Month"), _("Year"), _("Amount"),
             ]
 
         # Add logo in first row
@@ -611,7 +787,7 @@ class PaymentStatusListView(TemplateView):
         if data:
             totals_row_index = ws.max_row + 1
             totals_row_values = [
-                "Totals", "", "", "", "",
+                _("Totals"), "", "", "", "",
                 sum(d.get("amount", 0) for d in data),
             ]
             for col_index, value in enumerate(totals_row_values, start=1):
@@ -637,7 +813,8 @@ class PaymentStatusListView(TemplateView):
         response = HttpResponse(
             content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
         )
-        response["Content-Disposition"] = 'attachment; filename="payment_status.xlsx"'
+        export_filename = _("payment_status.xlsx")
+        response["Content-Disposition"] = f'attachment; filename="{export_filename}"'
         wb.save(response)
         return response
 
@@ -647,45 +824,72 @@ class PaymentStatusListView(TemplateView):
 class SummaryReportView(TemplateView):
     template_name = 'Quran/reports/summary_report.html'
 
-    # GET
-    def get(self, request, *args, **kwargs):
-        return super().get(request, *args, **kwargs)
-
-    # POST generate or exporting Excel
-    def post(self, request, *args, **kwargs):
-        # Read action: filter or excel
-        action = request.POST.get("action")
-
-        # Build context based on POST data
-        context = self.get_context_data(
-            school=request.POST.get("school"),
-            month=request.POST.get("month"),
-            year=request.POST.get("year"),
-        )
-
-        # Export to Excel if requested
-        if action == "excel" and context.get("data"):
-            return self.export_excel(context["data"])
-
-        # Otherwise, render the filtered report page
-        return self.render_to_response(context)
-
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         today = date.today()
+        
+        context.update({
+            "schools": School.objects.all(),
+            "selected_month": int(today.month),
+            "selected_year": int(today.year),
+            "months": range(1, 13),
+            "years": range(today.year, today.year + 10),
+        })
+        
+        # Add post-processing context if available
+        if hasattr(self, "post_context"):
+            context.update(self.post_context)
+            
+        return context
+    
+    def get(self, request, *args, **kwargs):
+        # Get filter parameters
+        school_id = request.GET.get('school')
+        month = request.GET.get('month')
+        year = request.GET.get('year')
+        
+        # Process and get report data
+        report_data = self.get_report_data(school_id, month, year)
+        
+        # Store in post_context for template
+        self.post_context = report_data
+        
+        return super().get(request, *args, **kwargs)
 
-        # Read values from kwargs (POST) or GET parameters
-        school_id = kwargs.get("school") or self.request.GET.get("school")
-        month = kwargs.get("month") or self.request.GET.get("month") or today.month
-        year = kwargs.get("year") or self.request.GET.get("year") or today.year
+    def post(self, request, *args, **kwargs):
+        # Read action: filter or excel
+        action = request.POST.get("action")
+        
+        # Get filter parameters
+        school_id = request.POST.get('school')
+        month = request.POST.get('month')
+        year = request.POST.get('year')
+        
+        # Process and get report data
+        report_data = self.get_report_data(school_id, month, year)
+        
+        # Export to Excel if requested
+        if action == "excel" and report_data.get("data"):
+            return self.export_excel(report_data["data"])
+        
+        # Store in post_context for template rendering
+        self.post_context = report_data
+        
+        # Otherwise, render the filtered report page
+        return super().get(request, *args, **kwargs)
 
-        # Convert values to integers
+    def get_report_data(self, school_id=None, month=None, year=None):
+        """Process and return report data based on filters."""
+        today = date.today()
+        data = None
+        totals = {}
+
+        # Convert and validate parameters
         school_id = int(school_id) if school_id else None
-        month = int(month)
-        year = int(year)
+        month = int(month) if month else today.month
+        year = int(year) if year else today.year
 
         # Get report data if a school is selected
-        data = None
         if school_id:
             data = get_group_summary(
                 school_id=school_id,
@@ -693,31 +897,27 @@ class SummaryReportView(TemplateView):
                 year=year
             )
 
-        # Calculate totals for numeric columns
-        totals = {}
-        if data:
-            totals = {
-                "total_students": sum(d.get("total_students", 0) for d in data),
-                "students_paid_current": sum(d.get("students_paid_current", 0) for d in data),
-                "students_discount_current": sum(d.get("students_discount_current", 0) for d in data),
-                "students_full_discount": sum(d.get("students_full_discount", 0) for d in data),
-                "students_not_paid": sum(d.get("students_not_paid", 0) for d in data),
-                "students_paid_previous": sum(d.get("students_paid_previous", 0) for d in data),
-                "students_discount_previous": sum(d.get("students_discount_previous", 0) for d in data),
-                "final_total": sum(d.get("final_total", 0) for d in data),
-            }
+            # Calculate totals for numeric columns
+            if data:
+                totals = {
+                    "total_students": sum(d.get("total_students", 0) for d in data),
+                    "students_paid_current": sum(d.get("students_paid_current", 0) for d in data),
+                    "students_discount_current": sum(d.get("students_discount_current", 0) for d in data),
+                    "students_full_discount": sum(d.get("students_full_discount", 0) for d in data),
+                    "students_not_paid": sum(d.get("students_not_paid", 0) for d in data),
+                    "students_paid_previous": sum(d.get("students_paid_previous", 0) for d in data),
+                    "students_discount_previous": sum(d.get("students_discount_previous", 0) for d in data),
+                    "final_total": sum(d.get("final_total", 0) for d in data),
+                }
 
         # Update context with all required data for template
-        context.update({
-            "schools": School.objects.all(),
+        context = {
             "selected_school": school_id,
             "selected_month": month,
             "selected_year": year,
-            "months": range(1, 13),
-            "years": range(today.year, today.year + 10),
             "data": data,
             "totals": totals,
-        })
+        }
         return context
 
     # Export Excel
@@ -742,11 +942,11 @@ class SummaryReportView(TemplateView):
             ]
             ws.sheet_view.rightToLeft = True
         else:
-            title_text = "Summary Report"
+            title_text = _("Summary Report")
             headers = [
-                "Teacher", "Group", "Start", "End", "Total Students",
-                "Paid Current", "Discount Current", "Full Discount", "Not Paid",
-                "Paid Previous", "Discount Previous", "Total Amount"
+                _("Teacher"), _("Group"), _("Start"), _("End"), _("Total Students"),
+                _("Paid Current"), _("Discount Current"), _("Full Discount"), _("Not Paid"),
+                _("Paid Previous"), _("Discount Previous"), _("Total Amount")
             ]
 
         # Add logo in first row
@@ -803,7 +1003,7 @@ class SummaryReportView(TemplateView):
         # Totals row
         totals_row_index = ws.max_row + 1
         totals_row_values = [
-            "Totals", "", "", "",
+            _("Totals"), "", "", "",
             sum(d.get("total_students", 0) for d in data),
             sum(d.get("students_paid_current", 0) for d in data),
             sum(d.get("students_discount_current", 0) for d in data),
@@ -836,13 +1036,8 @@ class SummaryReportView(TemplateView):
         response = HttpResponse(
             content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
         )
-        response["Content-Disposition"] = 'attachment; filename="summary_report.xlsx"'
+        export_filename = _("summary_report.xlsx")
+        response["Content-Disposition"] = f'attachment; filename="{export_filename}"'
         wb.save(response)
         return response
 
-
-if __name__ == "__main__":
-    # upgrade academic year
-    today = timezone.now().date()
-    if today.month == 9 and today.day == 1:
-        handle_academic_year()
