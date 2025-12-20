@@ -30,29 +30,25 @@
         </thead>
         <tbody>
             {% for class_group in class_groups %}
-            <tr>
-                <td>{{ forloop.counter }}</td>
-                <td>{{ class_group.name }}</td>
-                <td>{{ class_group.course }}</td>
-                <td>{{ class_group.teacher }}</td>
-                <td>{{ class_group.start_time }}</td>
-                <td>{{ class_group.end_time }}</td>
-                <td>
-                    {% if class_group.is_active %}
-                        <i class="bi bi-check-circle-fill text-success"></i>
-                    {% else %}
-                        <i class="bi bi-check-circle-fill text-danger"></i>
-                    {% endif %}
-                </td>
-                <td class="text-center">
-                    <a href="{% url 'class_group_edit' class_group.pk %}" class="btn btn-sm btn-warning">{% trans "Edit" %}</a>
-                    <a href="{% url 'class_group_delete' class_group.pk %}" class="btn btn-sm btn-danger">{% trans "Delete" %}</a>
-                </td>
-            </tr>
-            {% empty %}
-            <tr>
-                <td colspan="6">{% trans "No groups found." %}</td>
-            </tr>
+                <tr>
+                    <td>{{ forloop.counter }}</td>
+                    <td>{{ class_group.name }}</td>
+                    <td>{{ class_group.course }}</td>
+                    <td>{{ class_group.teacher }}</td>
+                    <td>{{ class_group.start_time }}</td>
+                    <td>{{ class_group.end_time }}</td>
+                    <td>
+                        {% if class_group.is_active %}
+                            <i class="bi bi-check-circle-fill text-success"></i>
+                        {% else %}
+                            <i class="bi bi-check-circle-fill text-danger"></i>
+                        {% endif %}
+                    </td>
+                    <td class="text-center">
+                        <a href="{% url 'class_group_edit' class_group.pk %}" class="btn btn-sm btn-warning">{% trans "Edit" %}</a>
+                        <a href="{% url 'class_group_delete' class_group.pk %}" class="btn btn-sm btn-danger">{% trans "Delete" %}</a>
+                    </td>
+                </tr>
             {% endfor %}
         </tbody>
     </table>
