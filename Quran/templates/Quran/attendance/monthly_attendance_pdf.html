@@ -2,69 +2,91 @@
 {% load i18n %}
 
 <!DOCTYPE html>
-<html>
-<head>
-    <meta charset="utf-8">
-    <title>{% trans "Monthly Attendance Report" %}</title>
-    
-    <!-- Bootstrap & Select2 & Custom CSS -->
-    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>{% trans "Monthly Attendance Report" %}</title>
 
-    <style>
-        @page {
-            size: A4 landscape;
-            margin: 0.5cm;
-        }
-        body {
-            margin: 0;
-            padding: 10px;
-            font-size: 10px;
-            font-family: 'Cairo', monospace;
-            padding: 2px 4px !important;
-        }
-    </style>
-</head>
-<body>
-    <!-- Header -->
-    <div class="text-center mb-3">
-        <h1 class="fw-bold">
+        <!-- Bootstrap -->
+        <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+
+        <style>
+            @page {
+                size: A4 landscape;
+                margin: 0.5cm;
+            }
+
+            @font-face {
+                font-family: Cairo;
+                src: url("{% static 'fonts/Cairo-Regular.ttf' %}");
+            }
+
+            body {
+                font-family: Cairo;
+                font-size: 10px;
+                direction: rtl;
+            }
+
+            h1 {
+                font-size: 16px;
+                margin-bottom: 10px;
+            }
+
+            table {
+                width: 100%;
+                border-collapse: collapse;
+            }
+
+            th, td {
+                padding: 4px;
+                text-align: center;
+                vertical-align: middle;
+            }
+
+            th {
+                background-color: #f2f2f2;
+                font-weight: bold;
+            }
+        </style>
+    </head>
+
+    <body>
+
+    <div class="text-center">
+        <h1>
             {% trans "Monthly Attendance Report" %} - {{ selected_month }} {{ selected_year }}
         </h1>
     </div>
-    
-    <!-- Attendance Table Only -->
-    <div class="table-responsive">
-        <table class="table table-bordered table-sm table-striped">
-            <thead class="table-light">
-                <tr>
-                    <th class="text-center fw-bold">{% trans "ID" %}</th>
-                    <th class="text-center fw-bold">{% trans "Name" %}</th>
-
-                    {% for day in days %}
-                        <th class="text-center fw-bold">{{ day }}</th>
-                    {% endfor %}
-                    <th class="text-center fw-bold">{% trans "Present" %}</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for student in data.students %}
-                <tr>
-                    <td class="text-center fw-bold">{{ student.id }}</td>
-                    <td class="text-center fw-bold">{{ student.name }}</td>
-                    
-                    {% for present in student.attendance %}
-                        <td class="text-center">
-                            {% if present %}✓{% else %}-{% endif %}
-                        </td>
-                    {% endfor %}
-                    
-                    <td class="text-center fw-bold">
-                        {{ student.total_present }} / {{ days|length }}
-                    </td>
-                </tr>
+    <table class="table table-bordered table-sm">
+        <thead>
+            <tr>
+                <th>{% trans "ID" %}</th>
+                <th>{% trans "Name" %}</th>
+                {% for day in days %}
+                    <th>{{ day }}</th>
                 {% endfor %}
-            </tbody>
-        </table>
-    </div>
-</body>
+                <th>{% trans "Present" %}</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for student in data.students %}
+            <tr>
+                <td>{{ student.id }}</td>
+                <td>{{ student.name }}</td>
+
+                {% for present in student.attendance %}
+                    <td>
+                        {% if present %}✔{% else %}&nbsp;{% endif %}
+                    </td>
+                {% endfor %}
+
+                <td>
+                    {{ student.total_present }} / {{ days|length }}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    </body>
 </html>

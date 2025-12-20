@@ -8,7 +8,7 @@ from django.core.exceptions import ValidationError
 from django.contrib.admin.views.decorators import staff_member_required
 from django.utils.translation import gettext as _
 from django.utils.decorators import method_decorator
-from django.db.models import Q
+from django.db.models import ProtectedError, Q
 from django.views.generic import (
     ListView, CreateView, UpdateView, DeleteView, TemplateView, DetailView
 )
@@ -35,8 +35,8 @@ from openpyxl.styles import Alignment, Font, PatternFill
 from django.conf import settings
 
 # Pdf Importing
-from weasyprint import HTML
 from django.template.loader import render_to_string
+from weasyprint import HTML
 
 
 # --------------------- Home ---------------------
@@ -159,6 +159,16 @@ class StudentDeleteView(DeleteView):
     model = Student
     template_name = 'Quran/student/student_confirm_delete.html'
     success_url = reverse_lazy('student_list')
+
+    def post(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        context = self.get_context_data()
+
+        try:
+            return super().post(request, *args, **kwargs)
+        except ProtectedError:
+            context['error_msg'] = _("Cannot delete student: related records exist.")
+            return self.render_to_response(context)
 
 
 # --------------------- Teacher ---------------------
@@ -394,8 +404,14 @@ class MonthlyAttendanceView(TemplateView):
         context = super().get_context_data(**kwargs)
         today = date.today()
         
+        # Pass options
+        schools = School.objects.all()
+        user_school = get_user_school(self.request)
+        groups = ClassGroup.objects.filter(school__in=user_school)
+
         context.update({
-            "schools": School.objects.all(),
+            "schools": schools,
+            "groups": groups,
             "selected_month": int(today.month),
             "selected_year": int(today.year),
             "months": range(1, 13),
@@ -410,12 +426,13 @@ class MonthlyAttendanceView(TemplateView):
 
     def get(self, request, *args, **kwargs):
         # Get filter parameters
+        selected_group = self.request.GET.get('selected_group')
         school_id = request.GET.get('school')
         month = request.GET.get('month')
         year = request.GET.get('year')
         
         # Process and get attendance data
-        attendance_data = self.get_attendance_data(school_id, month, year)
+        attendance_data = self.get_attendance_data(school_id, selected_group, month, year)
         
         # Store in post_context for template
         self.post_context = attendance_data
@@ -427,12 +444,13 @@ class MonthlyAttendanceView(TemplateView):
         action = request.POST.get("action")
         
         # Get filter parameters
+        selected_group = request.POST.get('selected_group')
         school_id = request.POST.get('school')
         month = request.POST.get('month')
         year = request.POST.get('year')
         
         # Process and get attendance data
-        attendance_data = self.get_attendance_data(school_id, month, year)
+        attendance_data = self.get_attendance_data(school_id, selected_group, month, year)
         
         # Export to PDF if requested
         if action == "pdf":
@@ -444,7 +462,7 @@ class MonthlyAttendanceView(TemplateView):
         # Otherwise, render the filtered report page
         return super().get(request, *args, **kwargs)
 
-    def get_attendance_data(self, school_id=None, month=None, year=None):
+    def get_attendance_data(self, selected_group=None, school_id=None, month=None, year=None):
         """Process and return attendance data based on filters."""
         today = date.today()
         data = None
@@ -456,6 +474,7 @@ class MonthlyAttendanceView(TemplateView):
 
         # Convert values
         school_id = int(school_id) if school_id else None
+        group_id = int(selected_group) if selected_group else None
         month = int(month) if month else today.month
         year = int(year) if year else today.year
 
@@ -463,6 +482,7 @@ class MonthlyAttendanceView(TemplateView):
         if school_id:
             data = get_attendance_summary(
                 school_id=school_id,
+                group_id=group_id,
                 month=month,
                 year=year
             )
@@ -472,6 +492,7 @@ class MonthlyAttendanceView(TemplateView):
             days = range(1, last_day + 1)
         
         context = {
+            "selected_group": group_id,
             "selected_school": school_id,
             "selected_month": month,
             "selected_year": year,
@@ -482,24 +503,13 @@ class MonthlyAttendanceView(TemplateView):
         return context
 
     def export_pdf(self, request, attendance_data):
-        """Export attendance data to PDF."""
-        
-        # Render HTML template with data
-        html_string = render_to_string('Quran/attendance/monthly_attendance_pdf.html', attendance_data)
-        
-        # Create PDF from HTML
-        html = HTML(string=html_string, base_url=request.build_absolute_uri('/'))
-        
-        # Generate PDF
-        pdf_file = html.write_pdf()
-        
-        # Create HTTP response with PDF
-        response = HttpResponse(pdf_file, content_type='application/pdf')
-        
-        # Set filename
+        """Export attendance data to PDF using Playwright."""
+        html = render_to_string('Quran/attendance/monthly_attendance_pdf.html', attendance_data)
+
+        response = HttpResponse(content_type='application/pdf')
         filename = f"attendance_report_{attendance_data['selected_month']}_{attendance_data['selected_year']}.pdf"
-        response['Content-Disposition'] = f'attachment; filename="{filename}"'
-        
+        response['Content-Disposition'] = f'inline; filename="{filename}"'
+        HTML(string=html, base_url=request.build_absolute_uri("/")).write_pdf(response)
         return response
 
 

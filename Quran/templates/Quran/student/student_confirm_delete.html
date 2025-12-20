@@ -4,14 +4,20 @@
 {% block title %}{% trans "Delete Student" %}{% endblock %}
 
 {% block content %}
-<div class="container">
+<div class="container mt-3">
     <h3>{% trans "Delete Student" %}</h3>
     <p>{% trans "Are you sure you want to delete" %} "{{ object.name }}"?</p>
 
-    <form method="post">
-        {% csrf_token %}
-        <button type="submit" class="btn btn-danger">{% trans "Confirm" %}</button>
-        <a href="{% url 'student_list' %}" class="btn btn-secondary">{% trans "Cancel" %}</a>
-    </form>
+    {% if error_msg %}
+        <div class="alert alert-warning">
+            <strong>{{ error_msg }}</strong>
+        </div>
+    {% else %}
+        <form method="post">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger">{% trans "Confirm" %}</button>
+            <a href="{% url 'student_list' %}" class="btn btn-secondary">{% trans "Cancel" %}</a>
+        </form>
+    {% endif %}
 </div>
 {% endblock %}

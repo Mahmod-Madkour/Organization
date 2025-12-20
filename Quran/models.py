@@ -153,7 +153,7 @@ class Student(models.Model):
 
 class Invoice(models.Model):
     school = models.ForeignKey(School, on_delete=models.CASCADE, related_name='invoices', verbose_name=_("School"))
-    student = models.ForeignKey(Student, on_delete=models.CASCADE, related_name='invoices', verbose_name=_("Student"))
+    student = models.ForeignKey(Student, on_delete=models.PROTECT, related_name='invoices', verbose_name=_("Student"))
     date = models.DateField(default=timezone.now, verbose_name=_("Date"))
     month = models.PositiveIntegerField(validators=[MinValueValidator(1)], verbose_name=_("Month"))
     year = models.PositiveIntegerField(validators=[MinValueValidator(2000)], verbose_name=_("Year"))
@@ -202,7 +202,7 @@ class Invoice(models.Model):
 
 class Attendance(models.Model):
     school = models.ForeignKey(School, on_delete=models.CASCADE, related_name='attendances', verbose_name=_("School"))
-    student = models.ForeignKey(Student, on_delete=models.CASCADE, related_name='attendances', verbose_name=_("Student"))
+    student = models.ForeignKey(Student, on_delete=models.PROTECT, related_name='attendances', verbose_name=_("Student"))
     date = models.DateField(verbose_name=_("Date"))
     present = models.BooleanField(default=True, verbose_name=_("Present"))
     updated_at = models.DateTimeField(auto_now=True, verbose_name=_("Updated At"))
@@ -214,7 +214,7 @@ class Attendance(models.Model):
 
 class StudentPaymentStatus(models.Model):
     school = models.ForeignKey(School, on_delete=models.CASCADE, related_name='student_payment_statuses', verbose_name=_("School"))
-    student = models.ForeignKey(Student, on_delete=models.CASCADE, related_name='payment_statuses', verbose_name=_("Student"))
+    student = models.ForeignKey(Student, on_delete=models.PROTECT, related_name='payment_statuses', verbose_name=_("Student"))
     invoice = models.ForeignKey(Invoice, on_delete=models.CASCADE, related_name='payments', verbose_name=_("Invoice"))
     month = models.PositiveIntegerField(verbose_name=_("Month"))
     year = models.PositiveIntegerField(verbose_name=_("Year"))

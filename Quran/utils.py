@@ -48,7 +48,7 @@ def get_missing_months_for_student(student):
     return missing_months
 
 
-def get_attendance_summary(school_id, month, year):
+def get_attendance_summary(school_id, group_id, month, year):
     # Get date range
     date_from = date(year, month, 1)
     last_day = calendar.monthrange(year, month)[1]
@@ -56,7 +56,11 @@ def get_attendance_summary(school_id, month, year):
     days_list = list(range(1, last_day + 1))
 
     # Get all students for this school
-    students = Student.objects.filter(school_id=school_id)
+    students = Student.objects.filter(
+        school_id=school_id,
+        group=group_id,
+        is_active=True
+    )
 
     if not students.exists():
         return {

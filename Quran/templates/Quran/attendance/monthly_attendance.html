@@ -29,8 +29,21 @@
                 </div>
             {% endif %}
 
-            <!-- Month -->
+            <!-- Group -->
             <div class="col-md-3">
+                <label for="groupSelect" class="form-label fw-semibold">{% trans "Choose Group" %}</label>                
+                <select class="form-select" id="groupSelect" name="selected_group" required>
+                    <option value="">{% trans "--------" %}</option>
+                    {% for group in groups %}
+                        <option value="{{ group.id }}" {% if group.id|stringformat:"s" == selected_group|stringformat:"s" %}selected{% endif %}>
+                            {{ group }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <!-- Month -->
+            <div class="col-md-1">
                 <label class="form-label fw-semibold">{% trans "Month" %}</label>
                 <select name="month" class="form-select" required>
                     {% for month in months %}
@@ -40,7 +53,7 @@
             </div>
 
             <!-- Year -->
-            <div class="col-md-3">
+            <div class="col-md-2">
                 <label class="form-label fw-semibold">{% trans "Year" %}</label>
                 <select name="year" class="form-select" required>
                     {% for year in years %}
@@ -61,14 +74,12 @@
                     <i class="bi bi-file-earmark-pdf me-1"></i> {% trans "PDF" %}
                 </button>
             </div>
-
         </div>
     </form>
 
-    <div class="table-responsive-custom mt-4">
-        <table class="table table-bordered table-striped full-width-table">
-
-            <thead class="table-light sticky-header">
+    <div class="table-responsive mt-4">
+        <table class="table table-bordered table-striped w-100">
+            <thead class="table-light">
                 <tr>
                     <th>{% trans "#" %}</th>
                     <th>{% trans "Student" %}</th>
