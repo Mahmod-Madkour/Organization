@@ -175,10 +175,9 @@ msgid "Schools"
 msgstr "المدارس"
 
 #: Quran/models.py:80
-#: Quran/templates/Quran/attendance/monthly_attendance_pdf.html:40
 #: Quran/templates/Quran/teacher/teacher_list.html:23
 msgid "ID"
-msgstr "م"
+msgstr "رقم البطاقة"
 
 #: Quran/models.py:81
 msgid "Teacher Name"
@@ -412,6 +411,7 @@ msgstr "حضور الطلاب"
 #: Quran/templates/Quran/student/student_list.html:39
 #: Quran/templates/Quran/student_payment_status/student_payment_status_list.html:59
 #: Quran/templates/Quran/teacher/teacher_list.html:21
+#: Quran/templates/Quran/attendance/monthly_attendance_pdf.html:40
 msgid "#"
 msgstr "م"
 
