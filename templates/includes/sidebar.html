@@ -20,6 +20,14 @@
                 {% trans "Student" %}
             </a>
         </li>
+        <!-- Attendance -->
+        <li>
+            <a href="{% url 'attendance' %}" 
+                class="nav-link {% if request.resolver_match.url_name == 'attendance' %}active{% endif %}">
+                <i class="bi bi-calendar-check-fill me-2"></i>
+                {% trans "Attendance" %}
+            </a>
+        </li>
         <!-- Teachers -->
         <li>
             <a href="{% url 'teacher_list' %}" 
@@ -44,14 +52,6 @@
                 class="nav-link {% if request.resolver_match.url_name|slice:":12" == "class_group_" %}active{% endif %}">
                 <i class="bi bi-people-fill me-2"></i>
                 {% trans "Group" %}
-            </a>
-        </li>
-        <!-- Attendance -->
-        <li>
-            <a href="{% url 'attendance' %}" 
-                class="nav-link {% if request.resolver_match.url_name == 'attendance' %}active{% endif %}">
-                <i class="bi bi-calendar-check-fill me-2"></i>
-                {% trans "Attendance" %}
             </a>
         </li>
         <!-- Monthly Attendance -->
