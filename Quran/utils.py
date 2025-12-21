@@ -136,7 +136,7 @@ def get_group_summary(school_id, month, year):
                     students__is_active=True
                 ),
                 distinct=True
-            )
+            ),
             price=F("course__price"),
 
             # Paid current month
