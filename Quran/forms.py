@@ -8,13 +8,20 @@ class StudentForm(forms.ModelForm):
     class Meta:
         model = Student
         fields = [
-            'school', 'name', 'gender', 'birth_date', 'academic_year', 'level', 'group', 
+            'school', 'name', 'id_number', 'gender', 'birth_date', 'academic_year', 'level', 'group', 
             'phone', 'parent_profession',
             'discount_type', 'registration_date', 'is_active',
         ]
         widgets = {
             'school': forms.Select(attrs={'class': 'form-select'}),
             'name': forms.TextInput(attrs={'class': 'form-control'}),
+            'id_number': forms.TextInput(attrs={
+                'type': 'tel',
+                'pattern': r'\d{14}',
+                'maxlength': '14',
+                'class': 'form-control',
+                'placeholder': 'Enter 14-digit ID'
+            }),
             'gender': forms.Select(attrs={'class': 'form-select'}),
             'birth_date': forms.DateInput(attrs={'type': 'date','class': 'form-control'}),
             'academic_year': forms.Select(attrs={'class': 'form-select'}),

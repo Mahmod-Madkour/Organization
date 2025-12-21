@@ -83,6 +83,7 @@
                 <tr>
                     <th>{% trans "#" %}</th>
                     <th>{% trans "Student" %}</th>
+                    <th>{% trans "Phone" %}</th>
                     {% for day in data.days %}
                         <th>{{ day }}</th>
                     {% endfor %}
@@ -94,6 +95,7 @@
                 <tr>
                     <td>{{ forloop.counter }}</td>
                     <td>{{ student.name }}</td>
+                    <td>{{ student.phone }}</td>
 
                     {% for present in student.attendance %}
                         <td class="{% if present %}present{% else %}absent{% endif %}">

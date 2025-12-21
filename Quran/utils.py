@@ -74,10 +74,11 @@ def get_attendance_summary(school_id, group_id, month, year):
         student__in=students,
         date__range=(date_from, date_to)
     ).values(
+        'student__name',
         'student_id',
         'date',
         'present'
-    ).order_by('student_id', 'date')
+    ).order_by('student__name')
  
     # Convert to nested dictionary: {student_id: {day: present}}
     attendance_dict = defaultdict(dict)
@@ -100,6 +101,7 @@ def get_attendance_summary(school_id, group_id, month, year):
         student_list.append({
             'id': student.id,
             'name': student.name,
+            "phone": student.phone,
             'attendance': attendance_list,
             'total_present': sum(attendance_list),
         })

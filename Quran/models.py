@@ -122,6 +122,7 @@ class ClassGroup(models.Model):
 
 class Student(models.Model):
     school = models.ForeignKey(School, on_delete=models.CASCADE, related_name='students', verbose_name=_("School"))
+    id_number = models.CharField(max_length=14, validators=[id_regex], unique=True, verbose_name=_("ID"))
     name = models.CharField(max_length=100, verbose_name=_("Student Name"))
     code = models.CharField(max_length=5, unique=True, blank=True, verbose_name=_("Code"))
     gender = models.CharField(max_length=1, choices=GENDER_CHOICES, verbose_name=_("Gender"))
