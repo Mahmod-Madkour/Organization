@@ -130,13 +130,20 @@ def get_group_summary(school_id, month, year):
         ClassGroup.objects.filter(school_id=school_id)
         .select_related('teacher')
         .annotate(
-            total_students=Count('students', distinct=True),
+            total_students=Count(
+                'students',
+                filter=Q(
+                    students__is_active=True
+                ),
+                distinct=True
+            )
             price=F("course__price"),
 
             # Paid current month
             students_paid_current=Count(
                 'students__payment_statuses',
                 filter=Q(
+                    students__is_active=True,
                     students__discount_type='none',
                     students__payment_statuses__is_paid=True,
                     students__payment_statuses__invoice__in=invoice_qs,
@@ -150,6 +157,7 @@ def get_group_summary(school_id, month, year):
             students_paid_previous=Count(
                 'students__payment_statuses',
                 filter=Q(
+                    students__is_active=True,
                     students__discount_type='none',
                     students__payment_statuses__is_paid=True,
                     students__payment_statuses__invoice__in=invoice_qs,
@@ -164,6 +172,7 @@ def get_group_summary(school_id, month, year):
             students_discount_current=Count(
                 'students__payment_statuses',
                 filter=Q(
+                    students__is_active=True,
                     students__discount_type='discount',
                     students__payment_statuses__is_paid=True,
                     students__payment_statuses__invoice__in=invoice_qs,
@@ -177,6 +186,7 @@ def get_group_summary(school_id, month, year):
             students_discount_previous=Count(
                 'students__payment_statuses',
                 filter=Q(
+                    students__is_active=True,
                     students__discount_type='discount',
                     students__payment_statuses__is_paid=True,
                     students__payment_statuses__invoice__in=invoice_qs,
@@ -190,7 +200,10 @@ def get_group_summary(school_id, month, year):
             # Fully exempted students
             students_full_discount=Count(
                 'students',
-                filter=Q(students__discount_type='full'),
+                filter=Q(
+                    students__is_active=True,
+                    students__discount_type='full'
+                ),
                 distinct=True,
             ),
         )

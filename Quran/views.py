@@ -381,7 +381,11 @@ class AttendanceView(TemplateView):
 
         group_students = []
         if date and group:
-            students = Student.objects.filter(is_active=True, school__in=user_school, group=int(group))
+            students = Student.objects.filter(
+                is_active=True,
+                school__in=user_school,
+                group=int(group)
+            ).order_by('name')
             for student in students:
                 missing = get_missing_months_for_student(student)
                 present = get_present_for_student(student.id, date)
