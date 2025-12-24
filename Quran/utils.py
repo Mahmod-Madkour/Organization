@@ -1,7 +1,6 @@
 import calendar
 from datetime import date, datetime
-from django.db.models import Count, Q, F, Value, IntegerField, DecimalField, ExpressionWrapper, Case, When
-from decimal import Decimal
+from django.db.models import Count, Q, F, Value, IntegerField, ExpressionWrapper, Case, When
 from collections import defaultdict
 from Quran.models import (
     School, Student, Attendance, StudentPaymentStatus, Invoice, ClassGroup, DiscountConfig
@@ -126,7 +125,7 @@ def get_group_summary(school_id, month, year):
 
     # Get the discount value for the school, default to 0 if not set
     discount_value = DiscountConfig.objects.filter(school_id=school_id).first()
-    discount_amount = discount_value.value if discount_value else Decimal('0.00')
+    discount_amount = discount_value.value if discount_value else 0
 
     data = (
         ClassGroup.objects.filter(school_id=school_id)
@@ -224,21 +223,21 @@ def get_group_summary(school_id, month, year):
             total_current_month=ExpressionWrapper(
                 (F('students_paid_current') * F("price")) +
                 (F('students_discount_current') * (F("price") - Value(discount_amount))),
-                output_field=DecimalField(max_digits=10, decimal_places=2),
+                output_field=IntegerField(),
             ),
 
             # Total previous months
             total_previous_months=ExpressionWrapper(
                 (F('students_paid_previous') * F("price")) +
                 (F('students_discount_previous') * (F("price") - Value(discount_amount))),
-                output_field=DecimalField(max_digits=10, decimal_places=2),
+                output_field=IntegerField(),
             ),
         )
         .annotate(
             # Final total
             final_total=ExpressionWrapper(
                 F('total_current_month') + F('total_previous_months'),
-                output_field=DecimalField(max_digits=10, decimal_places=2),
+                output_field=IntegerField(),
             )
         )
         .values(
@@ -270,9 +269,9 @@ def get_payment_summary(school_id, from_date, to_date):
     }
 
     if from_date:
-        filters['invoice__date__lte'] = from_date
+        filters['invoice__date__gte'] = from_date
     if to_date:
-        filters['invoice__date__gte'] = to_date
+        filters['invoice__date__lte'] = to_date
 
     data = (
         StudentPaymentStatus.objects.filter(**filters)

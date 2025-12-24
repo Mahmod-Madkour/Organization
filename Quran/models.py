@@ -1,5 +1,4 @@
 import random
-from decimal import Decimal
 from django.db import models
 from django.utils import timezone
 from django.contrib.auth.models import User
@@ -97,7 +96,7 @@ class Teacher(models.Model):
 class Course(models.Model):
     school = models.ForeignKey(School, on_delete=models.CASCADE, related_name='courses', verbose_name=_("School"))
     name = models.CharField(max_length=100, verbose_name=_("Course Name"))
-    price = models.DecimalField(max_digits=10, decimal_places=2, validators=[MinValueValidator(0)], verbose_name=_("Price"))
+    price = models.IntegerField(validators=[MinValueValidator(0)], verbose_name=_("Price"))
     description = models.TextField(blank=True, null=True, verbose_name=_("Description"))
     is_active = models.BooleanField(default=True, verbose_name=_("Active"))
     updated_at = models.DateTimeField(auto_now=True, verbose_name=_("Updated At"))
@@ -158,7 +157,7 @@ class Invoice(models.Model):
     date = models.DateField(default=timezone.now, verbose_name=_("Date"))
     month = models.PositiveIntegerField(validators=[MinValueValidator(1)], verbose_name=_("Month"))
     year = models.PositiveIntegerField(validators=[MinValueValidator(2000)], verbose_name=_("Year"))
-    amount = models.DecimalField(max_digits=10, decimal_places=2, validators=[MinValueValidator(0)], verbose_name=_("Total Amount"))
+    amount = models.IntegerField(validators=[MinValueValidator(0)], verbose_name=_("Total Amount"))
     updated_at = models.DateTimeField(auto_now=True, verbose_name=_("Updated At"))
 
     class Meta:
@@ -172,13 +171,13 @@ class Invoice(models.Model):
     def calculate_expected_amount(student):
         base_price = student.group.course.price
         if student.discount_type == 'full':
-            return Decimal('0.00')
+            return 0
         elif student.discount_type == 'discount':
             try:
                 discount_config = DiscountConfig.objects.filter(school=student.school).first()
-                discount_value = discount_config.value if discount_config else Decimal('0.00')
+                discount_value = discount_config.value if discount_config else 0
             except:
-                discount_value = Decimal('0.00')
+                discount_value = 0
             return base_price - discount_value
         return base_price
 
@@ -228,7 +227,7 @@ class StudentPaymentStatus(models.Model):
 class DiscountConfig(models.Model):
     school = models.ForeignKey(School, on_delete=models.CASCADE, related_name='discount_configs', verbose_name=_("School"))
     name = models.CharField(max_length=50, verbose_name=_("Discount Name"))
-    value = models.DecimalField(max_digits=10, decimal_places=2, validators=[MinValueValidator(0)], verbose_name=_("Discount Amount"))
+    value = models.IntegerField(validators=[MinValueValidator(0)], verbose_name=_("Discount Amount"))
     updated_at = models.DateTimeField(auto_now=True, verbose_name=_("Updated At"))
 
     class Meta:
