@@ -60,7 +60,7 @@ def get_attendance_summary(school_id, group_id, month, year):
         school_id=school_id,
         group_id=group_id,
         is_active=True
-    )
+    ).order_by('name')
 
     if not students.exists():
         return {
