@@ -617,7 +617,7 @@ class InvoiceCreateView(TemplateView):
             "name": student.name,
             "group": student.group.name,
             "course": student.group.course.name,
-            "price": int(expected_price),
+            "price": expected_price,
             "status": missing,
         }
 
@@ -643,7 +643,7 @@ class InvoicePrintView(TemplateView):
             "course": invoice.student.group.course.name,
             "month": invoice.month,
             "year": invoice.year,
-            "amount": int(invoice.amount),
+            "amount": invoice.amount,
             "status": missing,
         })
 

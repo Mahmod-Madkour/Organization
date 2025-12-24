@@ -1,6 +1,7 @@
 import calendar
 from datetime import date, datetime
-from django.db.models import Count, Q, F, Value, IntegerField, ExpressionWrapper, Case, When
+from django.db.models import Count, Q, F, Sum, Value, IntegerField, ExpressionWrapper, Case, When
+from django.db.models.functions import Coalesce
 from collections import defaultdict
 from Quran.models import (
     School, Student, Attendance, StudentPaymentStatus, Invoice, ClassGroup, DiscountConfig
@@ -138,7 +139,7 @@ def get_group_summary(school_id, month, year):
                 ),
                 distinct=True
             ),
-            price=F("course__price"),
+            # price=F("course__price"),
 
             # Paid current month
             students_paid_current=Count(
@@ -153,10 +154,34 @@ def get_group_summary(school_id, month, year):
                 ),
                 distinct=True,
             ),
+            students_paid_current_amount=Sum(
+                'students__payment_statuses__invoice__amount',
+                filter=Q(
+                    students__is_active=True,
+                    students__discount_type='none',
+                    students__payment_statuses__is_paid=True,
+                    students__payment_statuses__invoice__in=invoice_qs,
+                    students__payment_statuses__invoice__month=month,
+                    students__payment_statuses__invoice__year=year,
+                ),
+            ),
 
             # Paid previous months
             students_paid_previous=Count(
                 'students__payment_statuses',
+                filter=Q(
+                    students__is_active=True,
+                    students__discount_type='none',
+                    students__payment_statuses__is_paid=True,
+                    students__payment_statuses__invoice__in=invoice_qs,
+                ) & ~Q(
+                    students__payment_statuses__invoice__month=month,
+                    students__payment_statuses__invoice__year=year,
+                ),
+                distinct=True,
+            ),
+            students_paid_previous_amount=Sum(
+                'students__payment_statuses__invoice__amount',
                 filter=Q(
                     students__is_active=True,
                     students__discount_type='none',
@@ -182,10 +207,35 @@ def get_group_summary(school_id, month, year):
                 ),
                 distinct=True,
             ),
+            students_discount_current_amount=Sum(
+                'students__payment_statuses__invoice__amount',
+                filter=Q(
+                    students__is_active=True,
+                    students__discount_type='discount',
+                    students__payment_statuses__is_paid=True,
+                    students__payment_statuses__invoice__in=invoice_qs,
+                    students__payment_statuses__invoice__month=month,
+                    students__payment_statuses__invoice__year=year,
+                ),
+                distinct=True,
+            ),
 
             # Discount previous months
             students_discount_previous=Count(
                 'students__payment_statuses',
+                filter=Q(
+                    students__is_active=True,
+                    students__discount_type='discount',
+                    students__payment_statuses__is_paid=True,
+                    students__payment_statuses__invoice__in=invoice_qs,
+                ) & ~Q(
+                    students__payment_statuses__invoice__month=month,
+                    students__payment_statuses__invoice__year=year,
+                ),
+                distinct=True,
+            ),
+            students_discount_previous_amount=Sum(
+                'students__payment_statuses__invoice__amount',
                 filter=Q(
                     students__is_active=True,
                     students__discount_type='discount',
@@ -211,32 +261,37 @@ def get_group_summary(school_id, month, year):
         .annotate(
             # Unpaid current month
             students_not_paid=ExpressionWrapper(
-                F('total_students') - (
-                    F('students_paid_current') +
-                    F('students_discount_current') +
-                    F('students_full_discount')
+                Coalesce(F('total_students'), Value(0)) - (
+                    Coalesce(F('students_paid_current'), Value(0)) +
+                    Coalesce(F('students_discount_current'), Value(0)) +
+                    Coalesce(F('students_full_discount'), Value(0))
                 ),
                 output_field=IntegerField(),
             ),
 
             # Total current month
             total_current_month=ExpressionWrapper(
-                (F('students_paid_current') * F("price")) +
-                (F('students_discount_current') * (F("price") - Value(discount_amount))),
+                (
+                    Coalesce(F('students_paid_current_amount'), Value(0)) +
+                    Coalesce(F('students_discount_current_amount'), Value(0))
+                ),
                 output_field=IntegerField(),
             ),
 
             # Total previous months
             total_previous_months=ExpressionWrapper(
-                (F('students_paid_previous') * F("price")) +
-                (F('students_discount_previous') * (F("price") - Value(discount_amount))),
+                (
+                    Coalesce(F('students_paid_previous_amount'), Value(0)) +
+                    Coalesce(F('students_discount_previous_amount'), Value(0))
+                ),
                 output_field=IntegerField(),
-            ),
+            )
         )
         .annotate(
             # Final total
             final_total=ExpressionWrapper(
-                F('total_current_month') + F('total_previous_months'),
+                Coalesce(F('total_current_month'), Value(0)) +
+                Coalesce(F('total_previous_months'), Value(0)),
                 output_field=IntegerField(),
             )
         )
