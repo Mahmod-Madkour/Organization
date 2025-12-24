@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-12-21 22:23+0000\n"
+"POT-Creation-Date: 2025-12-24 20:40+0000\n"
 "PO-Revision-Date: 2025-11-29 20:37+0200\n"
 "Last-Translator: Cascade <cascade@example.com>\n"
 "Language-Team: Arabic\n"
@@ -234,14 +234,14 @@ msgstr "اسم المجموعة"
 #: Quran/templates/Quran/class_group/class_group_list.html:23
 #: Quran/templates/Quran/invoice/invoice.html:65
 #: Quran/templates/Quran/invoice/print_invoice.html:23
-#: templates/includes/sidebar.html:37
+#: templates/includes/sidebar.html:45
 msgid "Course"
 msgstr "الدورة"
 
 #: Quran/models.py:113
 #: Quran/templates/Quran/class_group/class_group_list.html:24
-#: Quran/templates/Quran/reports/summary_report.html:71 Quran/views.py:961
-#: templates/includes/sidebar.html:28
+#: Quran/templates/Quran/reports/summary_report.html:71 Quran/views.py:952
+#: templates/includes/sidebar.html:36
 msgid "Teacher"
 msgstr "المعلم"
 
@@ -256,7 +256,7 @@ msgstr "وقت الانتهاء"
 #: Quran/models.py:126 Quran/templates/Quran/attendance/attendance.html:66
 #: Quran/templates/Quran/invoice/invoice.html:57
 #: Quran/templates/Quran/student_payment_status/student_payment_status_list.html:62
-#: Quran/views.py:750
+#: Quran/views.py:745
 msgid "Student Name"
 msgstr "اسم الطالب"
 
@@ -274,8 +274,8 @@ msgstr "مستوى"
 
 #: Quran/models.py:132 Quran/templates/Quran/invoice/invoice.html:61
 #: Quran/templates/Quran/reports/summary_report.html:72
-#: Quran/templates/Quran/student/student_list.html:44 Quran/views.py:961
-#: templates/includes/sidebar.html:46
+#: Quran/templates/Quran/student/student_list.html:44 Quran/views.py:952
+#: templates/includes/sidebar.html:54
 msgid "Group"
 msgstr "المجموعة"
 
@@ -297,7 +297,7 @@ msgstr "الطالب"
 #: Quran/models.py:158 Quran/models.py:207
 #: Quran/templates/Quran/invoice/print_invoice.html:21
 #: Quran/templates/Quran/student_payment_status/student_payment_status_list.html:60
-#: Quran/views.py:750
+#: Quran/views.py:745
 msgid "Date"
 msgstr "التاريخ"
 
@@ -305,7 +305,7 @@ msgstr "التاريخ"
 #: Quran/templates/Quran/attendance/monthly_attendance.html:47
 #: Quran/templates/Quran/reports/summary_report.html:32
 #: Quran/templates/Quran/student_payment_status/student_payment_status_list.html:63
-#: Quran/views.py:750
+#: Quran/views.py:745
 msgid "Month"
 msgstr "الشهر"
 
@@ -313,12 +313,12 @@ msgstr "الشهر"
 #: Quran/templates/Quran/attendance/monthly_attendance.html:57
 #: Quran/templates/Quran/reports/summary_report.html:42
 #: Quran/templates/Quran/student_payment_status/student_payment_status_list.html:64
-#: Quran/views.py:750
+#: Quran/views.py:745
 msgid "Year"
 msgstr "السنة"
 
 #: Quran/models.py:161 Quran/templates/Quran/reports/summary_report.html:82
-#: Quran/views.py:963
+#: Quran/views.py:954
 msgid "Total Amount"
 msgstr "المبلغ الإجمالي"
 
@@ -331,13 +331,13 @@ msgstr "الطالب غير مسجل في أي مجموعة."
 msgid "Amount must equal course price: {expected}."
 msgstr "يجب أن يساوي المبلغ سعر الدورة: {expected}."
 
-#: Quran/models.py:201 Quran/views.py:567
+#: Quran/models.py:201 Quran/views.py:562
 msgid "An invoice already exists for this student for this month."
 msgstr "توجد فاتورة لهذا الطالب في هذا الشهر بالفعل."
 
 #: Quran/models.py:208 Quran/templates/Quran/attendance/attendance.html:68
 #: Quran/templates/Quran/attendance/monthly_attendance.html:90
-#: Quran/templates/Quran/attendance/monthly_attendance_pdf.html:68
+#: Quran/templates/Quran/attendance/monthly_attendance_pdf.html:70
 msgid "Present"
 msgstr "حاضر"
 
@@ -368,7 +368,7 @@ msgid "Discount Configs"
 msgstr "إعدادات الخصومات"
 
 #: Quran/templates/Quran/attendance/attendance.html:4
-#: Quran/templates/Quran/home.html:30 templates/includes/sidebar.html:54
+#: Quran/templates/Quran/home.html:30 templates/includes/sidebar.html:28
 msgid "Attendance"
 msgstr "الحضور"
 
@@ -407,7 +407,7 @@ msgstr "حضور الطلاب"
 
 #: Quran/templates/Quran/attendance/attendance.html:64
 #: Quran/templates/Quran/attendance/monthly_attendance.html:84
-#: Quran/templates/Quran/attendance/monthly_attendance_pdf.html:63
+#: Quran/templates/Quran/attendance/monthly_attendance_pdf.html:64
 #: Quran/templates/Quran/class_group/class_group_list.html:21
 #: Quran/templates/Quran/course/course_list.html:21
 #: Quran/templates/Quran/reports/summary_report.html:70
@@ -457,17 +457,18 @@ msgid "PDF"
 msgstr "PDF"
 
 #: Quran/templates/Quran/attendance/monthly_attendance.html:86
+#: Quran/templates/Quran/attendance/monthly_attendance_pdf.html:66
 #: Quran/templates/Quran/student/student_list.html:42
 #: Quran/templates/Quran/teacher/teacher_list.html:24
 msgid "Phone"
 msgstr "الهاتف"
 
 #: Quran/templates/Quran/attendance/monthly_attendance_pdf.html:8
-#: Quran/templates/Quran/attendance/monthly_attendance_pdf.html:57
+#: Quran/templates/Quran/attendance/monthly_attendance_pdf.html:58
 msgid "Monthly Attendance Report"
 msgstr "تقرير الحضور الشهري"
 
-#: Quran/templates/Quran/attendance/monthly_attendance_pdf.html:64
+#: Quran/templates/Quran/attendance/monthly_attendance_pdf.html:65
 #: Quran/templates/Quran/class_group/class_group_list.html:22
 #: Quran/templates/Quran/course/course_list.html:22
 #: Quran/templates/Quran/student/student_list.html:41
@@ -535,12 +536,12 @@ msgid "Add Group"
 msgstr "إضافة مجموعة"
 
 #: Quran/templates/Quran/class_group/class_group_list.html:25
-#: Quran/views.py:961
+#: Quran/views.py:952
 msgid "Start"
 msgstr "البدء"
 
 #: Quran/templates/Quran/class_group/class_group_list.html:26
-#: Quran/views.py:961
+#: Quran/views.py:952
 msgid "End"
 msgstr "النهاية"
 
@@ -700,7 +701,7 @@ msgstr "اشتراك لـ"
 
 #: Quran/templates/Quran/invoice/print_invoice.html:25
 #: Quran/templates/Quran/student_payment_status/student_payment_status_list.html:65
-#: Quran/views.py:750
+#: Quran/views.py:745
 msgid "Amount"
 msgstr "المبلغ"
 
@@ -716,7 +717,7 @@ msgstr "شكرًا لك!"
 msgid "Add New Invoice"
 msgstr "إضافة فاتورة جديدة"
 
-#: Quran/templates/Quran/reports/summary_report.html:10 Quran/views.py:959
+#: Quran/templates/Quran/reports/summary_report.html:10 Quran/views.py:950
 #: templates/includes/sidebar.html:87
 msgid "Summary Report"
 msgstr "تقرير الملخص"
@@ -726,7 +727,7 @@ msgstr "تقرير الملخص"
 msgid "Excel"
 msgstr "إكسل"
 
-#: Quran/templates/Quran/reports/summary_report.html:75 Quran/views.py:961
+#: Quran/templates/Quran/reports/summary_report.html:75 Quran/views.py:952
 msgid "Total Students"
 msgstr "إجمالي الطلاب"
 
@@ -738,11 +739,11 @@ msgstr "مدفوع (الشهر الحالي)"
 msgid "Discount (Current Month)"
 msgstr "خصم (الشهر الحالي)"
 
-#: Quran/templates/Quran/reports/summary_report.html:78 Quran/views.py:962
+#: Quran/templates/Quran/reports/summary_report.html:78 Quran/views.py:953
 msgid "Full Discount"
 msgstr "خصم كامل"
 
-#: Quran/templates/Quran/reports/summary_report.html:79 Quran/views.py:962
+#: Quran/templates/Quran/reports/summary_report.html:79 Quran/views.py:953
 msgid "Not Paid"
 msgstr "غير مدفوع"
 
@@ -756,7 +757,7 @@ msgstr "خصم (الأشهر السابقة)"
 
 #: Quran/templates/Quran/reports/summary_report.html:107
 #: Quran/templates/Quran/student_payment_status/student_payment_status_list.html:83
-#: Quran/views.py:804 Quran/views.py:1020
+#: Quran/views.py:799 Quran/views.py:1011
 msgid "Totals"
 msgstr "الاجمالي"
 
@@ -789,12 +790,12 @@ msgstr "إضافة طالب"
 
 #: Quran/templates/Quran/student_payment_status/student_payment_status_list.html:4
 #: Quran/templates/Quran/student_payment_status/student_payment_status_list.html:8
-#: Quran/views.py:748 templates/includes/sidebar.html:78
+#: Quran/views.py:743 templates/includes/sidebar.html:78
 msgid "Payment Status"
 msgstr "حالة الدفع"
 
 #: Quran/templates/Quran/student_payment_status/student_payment_status_list.html:61
-#: Quran/views.py:750
+#: Quran/views.py:745
 msgid "Student Code"
 msgstr "رمز الطالب"
 
@@ -821,53 +822,53 @@ msgstr "إضافة معلم"
 msgid "Cannot delete student: related records exist."
 msgstr "لا يمكن حذف الطالب: توجد سجلات مرتبطة."
 
-#: Quran/views.py:581
+#: Quran/views.py:576
 msgid "Invoice was not saved."
 msgstr "لم يتم حفظ الفاتورة."
 
-#: Quran/views.py:607
+#: Quran/views.py:602
 #, fuzzy
 #| msgid "No students found."
 msgid "Student not found."
 msgstr "لم يتم العثور على طلاب."
 
-#: Quran/views.py:609
+#: Quran/views.py:604
 #, fuzzy
 #| msgid "Students"
 msgid "Student is exempt."
 msgstr "الطلاب"
 
-#: Quran/views.py:830
+#: Quran/views.py:825
 #, fuzzy
 #| msgid "Payment Status"
 msgid "payment_status.xlsx"
 msgstr "حالة الدفع"
 
-#: Quran/views.py:962
+#: Quran/views.py:953
 #, fuzzy
 #| msgid "Paid (Current Month)"
 msgid "Paid Current"
 msgstr "مدفوع (الشهر الحالي)"
 
-#: Quran/views.py:962
+#: Quran/views.py:953
 #, fuzzy
 #| msgid "Discount (Current Month)"
 msgid "Discount Current"
 msgstr "خصم (الشهر الحالي)"
 
-#: Quran/views.py:963
+#: Quran/views.py:954
 #, fuzzy
 #| msgid "Paid (Previous Months)"
 msgid "Paid Previous"
 msgstr "مدفوع (الأشهر السابقة)"
 
-#: Quran/views.py:963
+#: Quran/views.py:954
 #, fuzzy
 #| msgid "Discount (Previous Months)"
 msgid "Discount Previous"
 msgstr "خصم (الأشهر السابقة)"
 
-#: Quran/views.py:1053
+#: Quran/views.py:1044
 #, fuzzy
 #| msgid "Summary Report"
 msgid "summary_report.xlsx"

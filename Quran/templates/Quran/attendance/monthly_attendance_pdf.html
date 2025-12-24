@@ -35,6 +35,7 @@
             table {
                 width: 100%;
                 border-collapse: collapse;
+                border: 1px solid #000;
             }
 
             th, td {
@@ -62,6 +63,7 @@
             <tr>
                 <th>{% trans "#" %}</th>
                 <th>{% trans "Name" %}</th>
+                <th>{% trans "Phone" %}</th>
                 {% for day in days %}
                     <th>{{ day }}</th>
                 {% endfor %}
@@ -73,6 +75,7 @@
             <tr>
                 <td>{{ student.id }}</td>
                 <td>{{ student.name }}</td>
+                <td>{{ student.phone }}</td>
 
                 {% for present in student.attendance %}
                     <td>
