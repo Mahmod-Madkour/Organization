@@ -337,7 +337,7 @@ class AttendanceView(TemplateView):
         selected_group = self.request.GET.get('selected_group')
 
         # Fetch group students
-        group_students = self.get_group_students(self.request, selected_date, selected_group)
+        group_students = self.get_group_students(request=self.request, date=selected_date, group=selected_group)
 
         self.post_context = {
             'selected_date': selected_date,
@@ -366,7 +366,7 @@ class AttendanceView(TemplateView):
             )
 
         # Fetch group students
-        group_students = self.get_group_students(self.request, selected_date, selected_group)
+        group_students = self.get_group_students(request=self.request, date=selected_date, group=selected_group)
 
         self.post_context = {
             'selected_date': selected_date,
@@ -387,8 +387,8 @@ class AttendanceView(TemplateView):
                 group=int(group)
             ).order_by('name')
             for student in students:
-                missing = get_missing_months_for_student(student)
-                present = get_present_for_student(student.id, date)
+                missing = get_missing_months_for_student(student=student)
+                present = get_present_for_student(student_id=student.id, date=date)
                 group_students.append({
                     "student_id": student.id,
                     "student_code": student.code,
@@ -430,14 +430,14 @@ class MonthlyAttendanceView(TemplateView):
 
     def get(self, request, *args, **kwargs):
         # Get filter parameters
-        selected_group = self.request.GET.get('selected_group')
+        group_id = self.request.GET.get('selected_group')
         school_id = request.GET.get('school')
         month = request.GET.get('month')
         year = request.GET.get('year')
         
         # Process and get attendance data
-        attendance_data = self.get_attendance_data(school_id, selected_group, month, year)
-        
+        attendance_data = self.get_attendance_data(school_id=school_id, group_id=group_id, month=month, year=year)
+
         # Store in post_context for template
         self.post_context = attendance_data
         
@@ -448,17 +448,17 @@ class MonthlyAttendanceView(TemplateView):
         action = request.POST.get("action")
         
         # Get filter parameters
-        selected_group = request.POST.get('selected_group')
+        group_id = request.POST.get('selected_group')
         school_id = request.POST.get('school')
         month = request.POST.get('month')
         year = request.POST.get('year')
         
         # Process and get attendance data
-        attendance_data = self.get_attendance_data(school_id, selected_group, month, year)
+        attendance_data = self.get_attendance_data(school_id=school_id, group_id=group_id, month=month, year=year)
         
         # Export to PDF if requested
         if action == "pdf":
-            return self.export_pdf(request, attendance_data)
+            return self.export_pdf(request=request, attendance_data=attendance_data)
         
         # Store in post_context for template rendering
         self.post_context = attendance_data
@@ -466,7 +466,7 @@ class MonthlyAttendanceView(TemplateView):
         # Otherwise, render the filtered report page
         return super().get(request, *args, **kwargs)
 
-    def get_attendance_data(self, selected_group=None, school_id=None, month=None, year=None):
+    def get_attendance_data(self, school_id, group_id, month, year):
         """Process and return attendance data based on filters."""
         today = date.today()
         data = None
@@ -478,18 +478,13 @@ class MonthlyAttendanceView(TemplateView):
 
         # Convert values
         school_id = int(school_id) if school_id else None
-        group_id = int(selected_group) if selected_group else None
+        group_id = int(group_id) if group_id else None
         month = int(month) if month else today.month
         year = int(year) if year else today.year
 
         # Get attendance data if a school is selected
         if school_id:
-            data = get_attendance_summary(
-                school_id=school_id,
-                group_id=group_id,
-                month=month,
-                year=year
-            )
+            data = get_attendance_summary(school_id=school_id, group_id=group_id, month=month, year=year)
             
             # Calculate days in month for calendar display
             last_day = calendar.monthrange(year, month)[1]
@@ -608,14 +603,14 @@ class InvoiceCreateView(TemplateView):
         elif student.discount_type == 'full':
             context["error_msg"] = _("Student is exempt.")
         else:
-            context["student_data"] = self.build_student_context(student)
+            context["student_data"] = self.build_student_context(student=student)
             
         return context
 
     def build_student_context(self, student):
         """Return context dictionary for a student."""
         expected_price = Invoice.calculate_expected_amount(student)
-        missing = get_missing_months_for_student(student)
+        missing = get_missing_months_for_student(student=student)
         return {
             "id": student.id,
             "code": student.code,
@@ -638,7 +633,7 @@ class InvoicePrintView(TemplateView):
         invoice = get_object_or_404(Invoice, pk=invoice_id)
 
         # Get missing months
-        missing = get_missing_months_for_student(invoice.student)
+        missing = get_missing_months_for_student(student=invoice.student)
 
         # Update context with all required data for template
         context.update({
@@ -688,7 +683,7 @@ class PaymentStatusListView(TemplateView):
         to_date = self.request.POST.get("to_date")
 
         # Fetch the data based on the selected filters
-        data, totals = self.get_payment_data(school_id, from_date, to_date)
+        data, totals = self.get_payment_data(school_id=school_id, from_date=from_date, to_date=to_date)
 
         # Store the filtered data and totals for use in the template
         self.post_context = {
@@ -701,18 +696,18 @@ class PaymentStatusListView(TemplateView):
 
         # Export to Excel if requested
         if action == "excel" and data:
-            return self.export_excel(data)
+            return self.export_excel(data=data)
 
         # Otherwise, render the filtered report page
         return self.get(request, *args, **kwargs)
 
-    def get_payment_data(self, school_id=None, from_date=None, to_date=None):
+    def get_payment_data(self, school_id, from_date, to_date):
         data = None
         totals = {}
 
         # Convert values to integers
         if not self.request.user.is_superuser and not school_id:
-            school_id = get_user_school(self.request).first()
+            school_id = get_user_school(self.request).first().id
         school_id = int(school_id)
 
         # Fetch the payment summary for the given filters
@@ -863,7 +858,7 @@ class SummaryReportView(TemplateView):
         year = request.GET.get('year')
         
         # Process and get report data
-        report_data = self.get_report_data(school_id, month, year)
+        report_data = self.get_report_data(school_id=school_id, month=month, year=year)
         
         # Store in post_context for template
         self.post_context = report_data
@@ -880,11 +875,11 @@ class SummaryReportView(TemplateView):
         year = request.POST.get('year')
         
         # Process and get report data
-        report_data = self.get_report_data(school_id, month, year)
+        report_data = self.get_report_data(school_id=school_id, month=month, year=year)
         
         # Export to Excel if requested
         if action == "excel" and report_data.get("data"):
-            return self.export_excel(report_data["data"])
+            return self.export_excel(data=report_data["data"])
         
         # Store in post_context for template rendering
         self.post_context = report_data
@@ -892,7 +887,7 @@ class SummaryReportView(TemplateView):
         # Otherwise, render the filtered report page
         return super().get(request, *args, **kwargs)
 
-    def get_report_data(self, school_id=None, month=None, year=None):
+    def get_report_data(self, school_id, month, year):
         """Process and return report data based on filters."""
         today = date.today()
         data = None
@@ -905,11 +900,7 @@ class SummaryReportView(TemplateView):
 
         # Get report data if a school is selected
         if school_id:
-            data = get_group_summary(
-                school_id=school_id,
-                month=month,
-                year=year
-            )
+            data = get_group_summary(school_id=school_id, month=month, year=year)
 
             # Calculate totals for numeric columns
             if data:

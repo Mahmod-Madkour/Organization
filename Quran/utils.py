@@ -16,8 +16,8 @@ def get_user_school(request):
         return School.objects.filter(users=user)
 
 
-def get_present_for_student(student_id, selected_date):
-    attendance = Attendance.objects.filter(student_id=student_id, date=selected_date).first()
+def get_present_for_student(student_id, date):
+    attendance = Attendance.objects.filter(student_id=student_id, date=date).first()
     return attendance.present if attendance else True
 
 
@@ -58,7 +58,7 @@ def get_attendance_summary(school_id, group_id, month, year):
     # Get all students for this school
     students = Student.objects.filter(
         school_id=school_id,
-        group=group_id,
+        group_id=group_id,
         is_active=True
     )
 
