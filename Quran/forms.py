@@ -111,10 +111,9 @@ class CourseForm(forms.ModelForm):
 class ClassGroupForm(forms.ModelForm):
     class Meta:
         model = ClassGroup
-        fields = ['school', 'name', 'course', 'teacher', 'start_time', 'end_time', 'is_active']
+        fields = ['school', 'course', 'teacher', 'start_time', 'end_time', 'is_active']
         widgets = {
             'school': forms.Select(attrs={'class': 'form-select'}),
-            'name': forms.TextInput(attrs={'class': 'form-control'}),
             'course': forms.Select(attrs={'class': 'form-select'}),
             'teacher': forms.Select(attrs={'class': 'form-select'}),
             'start_time': forms.TimeInput(attrs={'class': 'form-control', 'type': 'time'}),

@@ -19,9 +19,8 @@
         <thead class="table-light">
             <tr>
                 <th>{% trans "#" %}</th>
-                <th>{% trans "Name" %}</th>
-                <th>{% trans "Course" %}</th>
                 <th>{% trans "Teacher" %}</th>
+                <th>{% trans "Course" %}</th>
                 <th>{% trans "Start" %}</th>
                 <th>{% trans "End" %}</th>
                 <th>{% trans "Status" %}</th>
@@ -32,9 +31,8 @@
             {% for class_group in class_groups %}
                 <tr>
                     <td>{{ forloop.counter }}</td>
-                    <td>{{ class_group.name }}</td>
-                    <td>{{ class_group.course }}</td>
                     <td>{{ class_group.teacher }}</td>
+                    <td>{{ class_group.course }}</td>
                     <td>{{ class_group.start_time }}</td>
                     <td>{{ class_group.end_time }}</td>
                     <td>

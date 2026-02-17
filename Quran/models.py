@@ -116,8 +116,12 @@ class ClassGroup(models.Model):
     updated_at = models.DateTimeField(auto_now=True, verbose_name=_("Updated At"))
 
     def __str__(self):
-        return f"{self.name} - {self.teacher} ({self.start_time.strftime('%I:%M %p')} - {self.end_time.strftime('%I:%M %p')})"
+        return f"{self.teacher} ({self.start_time.strftime('%I:%M %p')} - {self.end_time.strftime('%I:%M %p')})"
 
+    def save(self, *args, **kwargs):
+        if not self.name:
+            self.name = f"{self.teacher} ({self.start_time.strftime('%I:%M %p')} - {self.end_time.strftime('%I:%M %p')})"
+        super().save(*args, **kwargs)
 
 class Student(models.Model):
     school = models.ForeignKey(School, on_delete=models.CASCADE, related_name='students', verbose_name=_("School"))
