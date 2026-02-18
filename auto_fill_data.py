@@ -3,6 +3,7 @@ import django
 import pandas as pd
 import re
 from datetime import datetime, time
+from django.db.models import Count
 
 # ==============================
 # DJANGO SETUP
@@ -19,7 +20,12 @@ from Quran.models import School, Course, Student, Teacher, ClassGroup
 # LOAD EXCEL
 # ==============================
 EXCEL_PATH = "./Data/asheer_students.xlsx"
-df = pd.read_excel(EXCEL_PATH, header=None, skiprows=1)
+df = pd.read_excel(
+    EXCEL_PATH,
+    header=None,
+    skiprows=1,
+    dtype=str
+)
 group_values = df.iloc[:, 6].dropna().unique()
 
 # ==============================
@@ -59,26 +65,25 @@ def normalize_name(name):
     name = re.sub(r'\s+', ' ', name).strip()
     return name
 
-def parse_arabic_time(t):
-    t = t.strip()
-    is_pm = 'م' in t
-    is_am = 'ص' in t
-    t = t.replace('م', '').replace('ص', '').strip()
-    hour, minute = map(int, t.split(':'))
-    if is_pm and hour != 12: hour += 12
-    if is_am and hour == 12: hour = 0
-    return time(hour, minute)
+def normalize_phone(phone_raw):
+    if not phone_raw:
+        return ''
+    phone = str(phone_raw).strip()
+    phone = re.sub(r"\D", "", phone)
 
-def extract_name_and_time(text):
-    DEFAULT_START = time(13, 0)
-    DEFAULT_END = time(15, 0)
+    # Fix Egyptian 10-digit mobile numbers
+    if len(phone) == 10 and not phone.startswith("0"):
+        phone = "0" + phone
 
-    text = str(text).strip()
-    match = re.search(r'(\d{1,2}:\d{2}\s*[مص])\s*-\s*(\d{1,2}:\d{2}\s*[مص])', text)
-    start_time = parse_arabic_time(match.group(1)) if match else DEFAULT_START
-    end_time = parse_arabic_time(match.group(2)) if match else DEFAULT_END
-    name = re.sub(r'\(.*?\)', '', text)
-    return normalize_name(name), start_time, end_time
+    return phone
+
+def normalize_gender(gender_raw):
+    gender = str(gender_raw).strip()
+    if gender in ['أنثى', 'انثى', 'و', 'ف']:
+        return 'F'
+    if gender in ['ذكر', 'م', 'ذ']:
+        return 'M'
+    return None
 
 def parse_birth_date(value):
     if pd.isna(value):
@@ -97,20 +102,40 @@ def parse_birth_date(value):
                 continue
     return None
 
-def normalize_phone(phone_raw):
-    if pd.isna(phone_raw):
-        return ''
-    if isinstance(phone_raw, float):
-        return str(int(phone_raw))
-    return str(phone_raw).strip()
+def parse_arabic_time(t):
+    t = t.strip()
+    is_pm = 'م' in t
+    is_am = 'ص' in t
+    t = t.replace('م', '').replace('ص', '').strip()
+    hour, minute = map(int, t.split(':'))
+    if is_pm and hour != 12: hour += 12
+    if is_am and hour == 12: hour = 0
+    return time(hour, minute)
 
-def normalize_gender(gender_raw):
-    gender = str(gender_raw).strip()
-    if gender in ['أنثى', 'انثى', 'و', 'ف']:
-        return 'F'
-    if gender in ['ذكر', 'م', 'ذ']:
-        return 'M'
-    return None
+def extract_name_and_time(text):
+    DEFAULT_START = time(13, 0)
+    DEFAULT_END = time(15, 0)
+
+    text = str(text).strip()
+    match = re.search(r'(\d{1,2}:\d{2}\s*[مص])\s*-\s*(\d{1,2}:\d{2}\s*[مص])', text)
+
+    start_time = parse_arabic_time(match.group(1)) if match else DEFAULT_START
+    end_time = parse_arabic_time(match.group(2)) if match else DEFAULT_END
+
+    name = re.sub(r'\(.*?\)', '', text)
+    return normalize_name(name), start_time, end_time
+
+# UNIQUE ID HANDLING
+existing_ids = set(
+    Student.objects.filter(school=school).values_list("id_number", flat=True)
+)
+used_ids_in_file = set()
+
+def generate_unique_fallback_id():
+    while True:
+        new_id = "9" + str(int(pd.Timestamp.now().timestamp() * 1000000))[-13:]
+        if new_id not in existing_ids and new_id not in used_ids_in_file:
+            return new_id
 
 # ==============================
 # CREATE TEACHERS & CLASSGROUPS
@@ -151,6 +176,29 @@ for cell in group_values:
 print("✅ Teachers and ClassGroups created successfully")
 
 # ==============================
+# DELETE ONLY STUDENTS WITHOUT RELATIONS
+# ==============================
+
+students_to_delete = (
+    Student.objects
+    .filter(school=school)
+    .annotate(
+        invoice_count=Count('invoices'),
+        attendance_count=Count('attendances'),
+        payment_status_count=Count('payment_statuses')
+    )
+    .filter(
+        invoice_count=0,
+        attendance_count=0,
+        payment_status_count=0
+    )
+)
+
+deleted_count, _ = students_to_delete.delete()
+
+print(f"🗑 Deleted {deleted_count} students without relations")
+
+# ==============================
 # CREATE STUDENTS
 # ==============================
 
@@ -182,11 +230,18 @@ for idx, row in df.iterrows():
         name = str(name).strip()
 
     # ID NUMBER
-    if pd.isna(id_number) or str(id_number).strip() == "":
-        id_number = str(pd.Timestamp.now().timestamp()).replace('.', '')[:14],
+    id_number = str(id_number).strip() if id_number else ""
+    id_number = re.sub(r"\D", "", id_number)
+
+    if len(id_number) != 14:
+        id_number = generate_unique_fallback_id()
         missing_cols.append("id_number")
-    else:
-        id_number = str(id_number).strip()
+
+    if id_number in existing_ids or id_number in used_ids_in_file:
+        id_number = generate_unique_fallback_id()
+        missing_cols.append("duplicate_id")
+
+    used_ids_in_file.add(id_number)
 
     # GENDER (Default M)
     gender = normalize_gender(gender_raw)
@@ -221,7 +276,6 @@ for idx, row in df.iterrows():
     if not phone:
         phone = "00000000000"
         missing_cols.append("phone")
-
 
     # PARENT PROFESSION
     if pd.isna(parent_profession) or str(parent_profession).strip() == "":
