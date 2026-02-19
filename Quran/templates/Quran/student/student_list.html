@@ -23,7 +23,7 @@
             <select name="group" class="form-select w-100" aria-label="{% trans 'Filter by group' %}">
                 <option value="">{% trans "--------" %}</option>
                 {% for group in groups %}
-                    <option value="{{ group.id }}" {% if group_filter == group.id %}selected{% endif %}>{{ group.name }}</option>
+                    <option value="{{ group.id }}" {% if group_filter == group.id %}selected{% endif %}>{{ group }}</option>
                 {% endfor %}
             </select>
 

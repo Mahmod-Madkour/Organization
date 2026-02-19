@@ -615,7 +615,7 @@ class InvoiceCreateView(TemplateView):
             "id": student.id,
             "code": student.code,
             "name": student.name,
-            "group": student.group.name,
+            "group": student.group,
             "course": student.group.course.name,
             "price": expected_price,
             "status": missing,
