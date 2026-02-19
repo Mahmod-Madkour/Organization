@@ -87,13 +87,31 @@
             </li>
             {% endif %}
 
-            {% for num in paginator.page_range %}
-                {% if page_obj.number == num %}
-                <li class="page-item active"><span class="page-link">{{ num }}</span></li>
+            {% with start=page_obj.number|add:'-5' %}
+                {% if start < 1 %}
+                    {% with start=1 %}
+                        {% for num in paginator.page_range %}
+                            {% if num >= start and num <= start|add:'10' %}
+                                {% if page_obj.number == num %}
+                                <li class="page-item active"><span class="page-link">{{ num }}</span></li>
+                                {% else %}
+                                <li class="page-item"><a class="page-link" href="?q={{ search_query }}&gender={{ gender_filter }}&group={{ group_filter }}&page={{ num }}">{{ num }}</a></li>
+                                {% endif %}
+                            {% endif %}
+                        {% endfor %}
+                    {% endwith %}
                 {% else %}
-                <li class="page-item"><a class="page-link" href="?q={{ search_query }}&gender={{ gender_filter }}&group={{ group_filter }}&page={{ num }}">{{ num }}</a></li>
+                    {% for num in paginator.page_range %}
+                        {% if num >= start and num <= start|add:'10' %}
+                            {% if page_obj.number == num %}
+                            <li class="page-item active"><span class="page-link">{{ num }}</span></li>
+                            {% else %}
+                            <li class="page-item"><a class="page-link" href="?q={{ search_query }}&gender={{ gender_filter }}&group={{ group_filter }}&page={{ num }}">{{ num }}</a></li>
+                            {% endif %}
+                        {% endif %}
+                    {% endfor %}
                 {% endif %}
-            {% endfor %}
+            {% endwith %}
 
             {% if page_obj.has_next %}
             <li class="page-item">
