@@ -36,7 +36,9 @@ from django.conf import settings
 
 # Pdf Importing
 from django.template.loader import render_to_string
-from weasyprint import HTML
+# from weasyprint import HTML
+import pdfkit
+from django.http import HttpResponse
 
 
 # --------------------- Home ---------------------
@@ -501,14 +503,36 @@ class MonthlyAttendanceView(TemplateView):
 
         return context
 
+    # def export_pdf(self, request, attendance_data):
+    #     """Export attendance data to PDF using Playwright."""
+    #     html = render_to_string('Quran/attendance/monthly_attendance_pdf.html', attendance_data)
+
+    #     response = HttpResponse(content_type='application/pdf')
+    #     filename = f"attendance_report_{attendance_data['selected_month']}_{attendance_data['selected_year']}.pdf"
+    #     response['Content-Disposition'] = f'inline; filename="{filename}"'
+    #     HTML(string=html, base_url=request.build_absolute_uri("/")).write_pdf(response)
+    #     return response
+
     def export_pdf(self, request, attendance_data):
-        """Export attendance data to PDF using Playwright."""
+        """Export attendance data to PDF using pdfkit/wkhtmltopdf."""
+        # render HTML template
         html = render_to_string('Quran/attendance/monthly_attendance_pdf.html', attendance_data)
 
-        response = HttpResponse(content_type='application/pdf')
+        # configure pdfkit (optional: specify path to wkhtmltopdf on Windows)
+        options = {
+            'encoding': 'UTF-8',
+            'enable-local-file-access': '',
+        }
+
+        # Windows specific path (uncomment if needed)
+        # config = pdfkit.configuration(wkhtmltopdf=r"C:\Program Files\wkhtmltopdf\bin\wkhtmltopdf.exe")
+        config = None
+
+        pdf = pdfkit.from_string(html, False, options=options, configuration=config)
+
+        response = HttpResponse(pdf, content_type='application/pdf')
         filename = f"attendance_report_{attendance_data['selected_month']}_{attendance_data['selected_year']}.pdf"
         response['Content-Disposition'] = f'inline; filename="{filename}"'
-        HTML(string=html, base_url=request.build_absolute_uri("/")).write_pdf(response)
         return response
 
 
@@ -638,6 +662,7 @@ class InvoicePrintView(TemplateView):
         # Update context with all required data for template
         context.update({
             "id": invoice.id,
+            "school": invoice.student.school.name,
             "date": invoice.date,
             "student": invoice.student.name,
             "course": invoice.student.group.course.name,
