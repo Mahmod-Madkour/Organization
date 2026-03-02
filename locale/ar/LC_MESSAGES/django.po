@@ -333,7 +333,7 @@ msgstr "يجب أن يساوي المبلغ سعر الدورة: {expected}."
 
 #: Quran/models.py:201 Quran/views.py:562
 msgid "An invoice already exists for this student for this month."
-msgstr "توجد فاتورة لهذا الطالب في هذا الشهر بالفعل."
+msgstr "يوجد إيصال لهذا الطالب في هذا الشهر بالفعل."
 
 #: Quran/models.py:208 Quran/templates/Quran/attendance/attendance.html:68
 #: Quran/templates/Quran/attendance/monthly_attendance.html:90
@@ -345,7 +345,7 @@ msgstr "حاضر"
 #: Quran/templates/Quran/invoice/print_invoice.html:11
 #: templates/includes/sidebar.html:70
 msgid "Invoice"
-msgstr "فاتورة"
+msgstr "إيصال"
 
 #: Quran/models.py:222
 msgid "Paid"
@@ -674,7 +674,7 @@ msgstr "أدخل الاسم"
 
 #: Quran/templates/Quran/invoice/invoice.html:48
 msgid "Student Invoice"
-msgstr "فاتورة الطالب"
+msgstr "إيصال الطالب"
 
 #: Quran/templates/Quran/invoice/invoice.html:73
 msgid "For"
@@ -693,7 +693,7 @@ msgstr "طباعة"
 
 #: Quran/templates/Quran/invoice/print_invoice.html:20
 msgid "Invoice ID"
-msgstr "رقم الفاتورة"
+msgstr "رقم الإيصال"
 
 #: Quran/templates/Quran/invoice/print_invoice.html:24
 msgid "Subscription For"
@@ -715,7 +715,7 @@ msgstr "شكرًا لك!"
 
 #: Quran/templates/Quran/invoice/print_invoice.html:41
 msgid "Add New Invoice"
-msgstr "إضافة فاتورة جديدة"
+msgstr "إضافة إيصال جديد"
 
 #: Quran/templates/Quran/reports/summary_report.html:10 Quran/views.py:950
 #: templates/includes/sidebar.html:87
@@ -824,7 +824,7 @@ msgstr "لا يمكن حذف الطالب: توجد سجلات مرتبطة."
 
 #: Quran/views.py:576
 msgid "Invoice was not saved."
-msgstr "لم يتم حفظ الفاتورة."
+msgstr "لم يتم حفظ الإيصال."
 
 #: Quran/views.py:602
 #, fuzzy
