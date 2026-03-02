@@ -132,15 +132,15 @@ msgstr "خريج"
 
 #: Quran/models.py:54
 msgid "No discount"
-msgstr "لا يوجد خصم"
+msgstr "اشتراك"
 
 #: Quran/models.py:55
 msgid "Have discount"
-msgstr "يوجد خصم"
+msgstr "مخفض"
 
 #: Quran/models.py:56
 msgid "Full discount"
-msgstr "خصم كامل"
+msgstr "معفي"
 
 #: Quran/models.py:65
 msgid "School Name"

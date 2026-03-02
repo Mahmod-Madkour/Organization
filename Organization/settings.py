@@ -91,6 +91,16 @@ LOGIN_REDIRECT_URL = '/'
 # Keeps users away from Django admin and provides a clean entry point
 LOGOUT_REDIRECT_URL = '/login/'
 
+# =========================================
+# Session Settings
+# =========================================
+
+# Set session to expire when browser closes
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+
+# Set session cookie to expire when browser closes
+SESSION_COOKIE_AGE = 0
+
 
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
