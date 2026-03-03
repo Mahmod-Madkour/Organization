@@ -25,16 +25,22 @@ def get_missing_months_for_student(student):
     if student.discount_type == 'full':
         return []
 
-    start_month, _ = DiscountConfig.objects.get_or_create(
+    start_month_obj, _ = DiscountConfig.objects.get_or_create(
         school=student.school,
         name='start_month',
         defaults={'value': 1}
     )
-    start_year, _ = DiscountConfig.objects.get_or_create(
+
+    start_year_obj, _ = DiscountConfig.objects.get_or_create(
         school=student.school,
         name='start_year',
         defaults={'value': 2026}
     )
+
+    # Get actual values
+    start_month = int(start_month_obj.value)
+    start_year = int(start_year_obj.value)
+
     today = date.today()
 
     required_months = []
@@ -134,8 +140,12 @@ def get_group_summary(school_id, month, year):
     invoice_qs = Invoice.objects.filter(school_id=school_id, date__range=(date_from, date_to))
 
     # Get the discount value for the school, default to 0 if not set
-    discount_value = DiscountConfig.objects.filter(school_id=school_id).first()
-    discount_amount = discount_value.value if discount_value else 0
+    discount_value_obj, _ = DiscountConfig.objects.get_or_create(
+        school=school_id,
+        name='discount',
+        defaults={'value': 30}
+    )
+    discount_value = discount_value_obj.value
 
     data = (
         ClassGroup.objects.filter(school_id=school_id)

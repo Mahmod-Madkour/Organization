@@ -177,11 +177,12 @@ class Invoice(models.Model):
         if student.discount_type == 'full':
             return 0
         elif student.discount_type == 'discount':
-            try:
-                discount_config = DiscountConfig.objects.filter(school=student.school).first()
-                discount_value = discount_config.value if discount_config else 0
-            except:
-                discount_value = 0
+            discount_value_obj, _ = DiscountConfig.objects.get_or_create(
+                school=student.school,
+                name='discount',
+                defaults={'value': 30}
+            )
+            discount_value = discount_value_obj.value
             return base_price - discount_value
         return base_price
 
