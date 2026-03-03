@@ -34,11 +34,11 @@ from django.contrib.staticfiles import finders
 from openpyxl.styles import Alignment, Font, PatternFill
 from django.conf import settings
 
-# Pdf Importing
-from django.template.loader import render_to_string
-# from weasyprint import HTML
-import pdfkit
-from django.http import HttpResponse
+# # Pdf Importing
+# from django.template.loader import render_to_string
+# # from weasyprint import HTML
+# import pdfkit
+# from django.http import HttpResponse
 
 
 # --------------------- Home ---------------------
@@ -446,9 +446,6 @@ class MonthlyAttendanceView(TemplateView):
         return super().get(request, *args, **kwargs)
 
     def post(self, request, *args, **kwargs):
-        # Read action: filter or pdf
-        action = request.POST.get("action")
-        
         # Get filter parameters
         group_id = request.POST.get('selected_group')
         school_id = request.POST.get('school')
@@ -458,9 +455,12 @@ class MonthlyAttendanceView(TemplateView):
         # Process and get attendance data
         attendance_data = self.get_attendance_data(school_id=school_id, group_id=group_id, month=month, year=year)
         
-        # Export to PDF if requested
-        if action == "pdf":
-            return self.export_pdf(request=request, attendance_data=attendance_data)
+        # # Read action: filter or pdf
+        # action = request.POST.get("action")
+
+        # # Export to PDF if requested
+        # if action == "pdf":
+        #     return self.export_pdf(request=request, attendance_data=attendance_data)
         
         # Store in post_context for template rendering
         self.post_context = attendance_data
@@ -513,27 +513,27 @@ class MonthlyAttendanceView(TemplateView):
     #     HTML(string=html, base_url=request.build_absolute_uri("/")).write_pdf(response)
     #     return response
 
-    def export_pdf(self, request, attendance_data):
-        """Export attendance data to PDF using pdfkit/wkhtmltopdf."""
-        # render HTML template
-        html = render_to_string('Quran/attendance/monthly_attendance_pdf.html', attendance_data)
+    # def export_pdf(self, request, attendance_data):
+    #     """Export attendance data to PDF using pdfkit/wkhtmltopdf."""
+    #     # render HTML template
+    #     html = render_to_string('Quran/attendance/monthly_attendance_pdf.html', attendance_data)
 
-        # configure pdfkit (optional: specify path to wkhtmltopdf on Windows)
-        options = {
-            'encoding': 'UTF-8',
-            'enable-local-file-access': '',
-        }
+    #     # configure pdfkit (optional: specify path to wkhtmltopdf on Windows)
+    #     options = {
+    #         'encoding': 'UTF-8',
+    #         'enable-local-file-access': '',
+    #     }
 
-        # Windows specific path (uncomment if needed)
-        # config = pdfkit.configuration(wkhtmltopdf=r"C:\Program Files\wkhtmltopdf\bin\wkhtmltopdf.exe")
-        config = None
+    #     # Windows specific path (uncomment if needed)
+    #     # config = pdfkit.configuration(wkhtmltopdf=r"C:\Program Files\wkhtmltopdf\bin\wkhtmltopdf.exe")
+    #     config = None
 
-        pdf = pdfkit.from_string(html, False, options=options, configuration=config)
+    #     pdf = pdfkit.from_string(html, False, options=options, configuration=config)
 
-        response = HttpResponse(pdf, content_type='application/pdf')
-        filename = f"attendance_report_{attendance_data['selected_month']}_{attendance_data['selected_year']}.pdf"
-        response['Content-Disposition'] = f'inline; filename="{filename}"'
-        return response
+    #     response = HttpResponse(pdf, content_type='application/pdf')
+    #     filename = f"attendance_report_{attendance_data['selected_month']}_{attendance_data['selected_year']}.pdf"
+    #     response['Content-Disposition'] = f'inline; filename="{filename}"'
+    #     return response
 
 
 # --------------------- Invoices ---------------------

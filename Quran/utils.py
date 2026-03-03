@@ -25,7 +25,16 @@ def get_missing_months_for_student(student):
     if student.discount_type == 'full':
         return []
 
-    start_year, start_month = 2025, 10
+    start_month, _ = DiscountConfig.objects.get_or_create(
+        school=student.school,
+        name='start_month',
+        defaults={'value': 1}
+    )
+    start_year, _ = DiscountConfig.objects.get_or_create(
+        school=student.school,
+        name='start_year',
+        defaults={'value': 2026}
+    )
     today = date.today()
 
     required_months = []
